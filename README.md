@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/scatter.png)](https://nodei.co/npm/scatter/)
+
 # Scatter
 
 Scatter allows you to split your projects in components located in **separated root directories**, and then uses **Dependency Injection** to make your code whole again.
