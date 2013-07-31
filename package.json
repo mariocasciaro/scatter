@@ -26,5 +26,12 @@
   "scripts": {
     "test": "mocha test/*.js --reporter spec"
   },
+  "keywords": [
+    "dependency injection",
+    "inversion of control",
+    "extensibility",
+    "hooks",
+    "ioc"
+  ],
   "license": "MIT"
 }

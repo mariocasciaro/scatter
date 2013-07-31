@@ -8,13 +8,16 @@ Scatter allows you to split your projects in components located in **separated r
 
 **WARNING**: In this phase, Scatter API are subject to change frequently. Please submit your feedback and help stabilize its interface.
 
-## Get started
+## Features
 
-Install:
+- Support for different project roots (e.g. core + plugins)
+- Support for namespaces (follows the directory structure)
+- Automatic discovery and registration of modules
+- Module instantiation through factories, constructors or plain obejcts
+- Instantiate and initialize modules asynchronously using promises
+- Support for hooks (Scatter services), with sync/async execution
 
-```shell
-npm install scatter
-```
+## Getting started
 
 Intitialize the Scatter container and define your roots:
 ```javascript
@@ -55,7 +58,7 @@ scatter.load('hello').then(function(mod) {
 
 Using the `__scattered` descriptor it's possible to control how the module is instantiated, but more importantly, how it's wired with other modules.
 
-The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using factories. 
+The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using factories.
 
 Let's refactor our  `hello.js` file above to load other modules:
 
@@ -84,7 +87,7 @@ module.exports = {
 
 After the changes above, as expected, our `app.js` will now print `Hello Earth!`.
 
-Ok, now it comes the cool part. Let's say that we now realize that we are using a too "cold" name for our planet and we want to give her a more poetic "Blue Planet". **There is no need to change the core code of our project!** Just create a new module in the `components` directory:
+Ok, now it comes the cool part. Let's say we now realize that we are using a too "cold" name for our planet and we want to give it a more poetic "Blue Planet". **There is no need to change the core code of our project!** Just create a new module in the `components` directory:
 
 
 ```javascript
@@ -106,6 +109,67 @@ var scatter = new Scatter({
     ]
 });
 ```
+
+## Scatter services
+
+One of the most powerful features of Scatter is the services framework. You can use it to implement extension points, hooks or emit events.
+
+To define a service, create a function in your module then declare it in your `__scattered` descriptor. Here is an example of how you can use it to register some routes in an `express` application.
+
+```javascript
+// file: /components/routes/home.js
+
+var self = module.exports = {
+    home: function(req, res) {
+        ...
+    },
+    register: function(express) {
+        express.get('/', self.home);
+    }
+};
+self.__scattered = {
+    provides: 'register'
+}
+```
+
+```javascript
+// file: /components/routes/person.js
+
+var self = module.exports = {
+    view: function(req, res) {
+        ...
+    },
+    register: function(express) {
+        express.get('/person', self.view);
+    }
+};
+self.__scattered = {
+    provides: 'register'
+}
+```
+
+Now somewhere else in your project you can register all your routes:
+
+```javascript
+// file: /core/expressApp.js
+...
+module.exports = function(express, registerRoutes) {
+    var self = {
+        express: express(),
+        initialize: function() {
+            ...
+
+            return registerRoutes(self.express);
+        }
+    }
+    return self;
+};
+module.exports.__scattered = {
+    args: ['npm!express', 'svc!routes/register']
+}
+```
+
+
 
 ## More to come...
 
