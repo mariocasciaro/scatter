@@ -1,0 +1,30 @@
+{
+  "author": {
+    "name": "Mario Casciaro"
+  },
+  "name": "scatter",
+  "description": "Dependency Injection container for Node.js.",
+  "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mariocasciaro/scatter.git"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "lodash": "~1.3.1",
+    "when": "~2.2.1",
+    "args-list": "~0.3.0",
+    "minimatch": "~0.2.12",
+    "glob": "~3.2.3",
+    "readdirp": "~0.3.1",
+    "inherits": "~2.0.0"
+  },
+  "devDependencies": {
+    "chai": "~1.7.2",
+    "mocha": "~1.12.0"
+  },
+  "scripts": {
+    "test": "mocha test/*.js --reporter spec"
+  },
+  "license": "MIT"
+}
