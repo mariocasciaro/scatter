@@ -156,18 +156,44 @@ Now somewhere else in your project you can register all your routes:
 module.exports = function(express, registerRoutes) {
     var self = {
         express: express(),
-        initialize: function() {
+        initializeApp: function() {
             ...
 
-            return registerRoutes(self.express);
+            return registerRoutes.sequence(self.express);
         }
     }
     return self;
 };
 module.exports.__scattered = {
-    args: ['npm!express', 'svc!routes/register']
+    args: ['npm!express', 'svc!routes/register'],
+    provides: ['initializeApp']
 }
 ```
+Then the app entry point:
+
+```javascript
+// file: /app.js
+
+var scatter = new Scatter({
+    roots: [
+        __dirname + '/components/*',
+        __dirname + '/core'
+    ],
+    npmRequire: function(name) {
+        return require(name);
+    },
+});
+
+scatter.getService('initializeApp').sequence().then(function() {
+    console.log('App initialized');
+});
+```
+
+Notice you require a service exactly in the same way you require a module! **The service become a dependency**!
+
+Also notice how you can require the express npm module with `npm!express`. This is not required, you can still use the normal `require` for it, but it's adviceable.
+
+Another cool thing, is that the three modules do not know of the existence of each other, they are totally decoupled.
 
 
 
