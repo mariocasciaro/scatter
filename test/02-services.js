@@ -78,7 +78,7 @@ describe('Scatter Services',function(){
     it('should invoke as chain', function(done) {
       scatter.load('svc!chain').then(function(svc) {
         return svc.pipeline("").then(function(result) {
-          expect(result).to.be.equal('Module3Module1Module2');
+          expect(result).to.be.equal('Module1Module2Module3');
           done();
         });
       }).otherwise(done);

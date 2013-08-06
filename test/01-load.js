@@ -3,11 +3,14 @@ var expect = require('chai').expect,
   Scatter = require('../lib');
 
 
+var TEST_DIR = __dirname + '/01-load/';
+
+
 describe('Scatter basic loading',function(){
   describe("load", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/basic'
+        TEST_DIR + '/basic'
       ]
     });
   
@@ -46,7 +49,7 @@ describe('Scatter basic loading',function(){
   describe("load", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/types'
+        TEST_DIR + '/types'
       ]
     });
 
@@ -85,7 +88,7 @@ describe('Scatter basic loading',function(){
   describe("Dependency injection", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/di'
+        TEST_DIR + '/di'
       ]
     });
 
@@ -139,8 +142,8 @@ describe('Scatter basic loading',function(){
   describe("2 base paths", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/2roots/base1',
-        __dirname + '/01-load/2roots/base2'
+        TEST_DIR + '/2roots/base1',
+        TEST_DIR + '/2roots/base2'
       ]
     });
 
@@ -155,7 +158,7 @@ describe('Scatter basic loading',function(){
   describe("Base paths using globs", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/2roots/base*'
+        TEST_DIR + '/2roots/base*'
       ]
     });
 
@@ -170,21 +173,18 @@ describe('Scatter basic loading',function(){
   describe("assemble", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/2rootsAssemble/base1',
-        __dirname + '/01-load/2rootsAssemble/base2'
-      ],
-      namespaceFilters: ["!ignored"]
+        TEST_DIR + '/2rootsAssemble/base1',
+        TEST_DIR + '/2rootsAssemble/base2'
+      ]
     });
     
     
-    before(function(done){
-      scatter.assemble().then(function() {
-        done();
-      }).otherwise(done);
+    before(function(){
+      scatter.assemble();
     });
 
     it('should load all modules in advance', function() {
-      var inspector = require(__dirname + '/01-load/2rootsAssemble/inspector');
+      var inspector = require(TEST_DIR + '/2rootsAssemble/inspector');
       expect(inspector).to.have.property('b1Module1' , true);
       expect(inspector).to.have.property('b2Module1' , true);
       expect(inspector).to.have.property('b2Module2' , true);
@@ -201,18 +201,44 @@ describe('Scatter basic loading',function(){
   describe("scoped assemble", function() {
     var scatter = new Scatter({
       roots: [
-        __dirname + '/01-load/2rootsScopedAssemble/base1',
-        __dirname + '/01-load/2rootsScopedAssemble/base2'
+        TEST_DIR + '/2rootsScopedAssemble/base1',
+        TEST_DIR + '/2rootsScopedAssemble/base2'
       ]
     });
 
-    it('should load only matching modules in advance', function(done) {
-      scatter.assemble("namespace").then(function() {
-        var inspector = require(__dirname + '/01-load/2rootsScopedAssemble/inspector');
-        expect(inspector).to.not.have.property('b1Module1');
-        expect(inspector).to.not.have.property('b2Module1');
-        expect(inspector).to.not.have.property('b2Module2');
-        expect(inspector).to.have.property('b2NamespaceModule1' , true);
+    it('should load only matching modules in advance', function() {
+      scatter.assemble("namespace");
+      
+      var inspector = require(TEST_DIR + '/2rootsScopedAssemble/inspector');
+      expect(inspector).to.not.have.property('b1Module1');
+      expect(inspector).to.not.have.property('b2Module1');
+      expect(inspector).to.not.have.property('b2Module2');
+      expect(inspector).to.have.property('b2NamespaceModule1' , true);
+    });
+  });
+
+
+  describe("autoresolver", function() {
+    it('should discover all roots in appDir', function(done) {
+      var scatter = new Scatter({
+        appRoot: TEST_DIR + '/2rootsAutodiscover'
+      });
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'mod2');
+        done();
+      }).otherwise(done);
+    });
+
+    it('should discover npm modules', function(done) {
+      var scatter = new Scatter({
+        appRoot: TEST_DIR + '/2rootsAutodiscover',
+        nodeModulesRoot: __dirname + "/../node_modules"
+      });
+
+      scatter.load('npm!lodash').then(function(mod) {
+        expect(mod).to.exist;
+        expect(mod.VERSION).to.be.equal(require('lodash').VERSION);
         done();
       }).otherwise(done);
     });

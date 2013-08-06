@@ -5,7 +5,7 @@ var mocha = new Mocha({timeout: '5s'});
 var passed = [];
 var failed = [];
 
-mocha.addFile('test/04-stateful'); 
+mocha.addFile('test/03-complexWiring'); 
 
 mocha.run(function() {
 

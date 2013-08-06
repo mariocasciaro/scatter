@@ -16,8 +16,8 @@ module.exports = {
 module.exports.__scattered = {
   provides: {
     simple_service: {},
-    chain: {after: ['l1/l2/Module2']},
-    one: {after: ['l1/l2/Module2']},
+    chain: {after: ['l1/Module2']},
+    one: {after: ['l1/Module2']},
     promises: {after: ['l1/l2/Module2']}
   }
 };

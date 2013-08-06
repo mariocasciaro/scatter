@@ -10,7 +10,7 @@ Scatter allows you to split your projects in components located in **separated r
 
 ## Features
 
-- Support for different project roots (e.g. core + plugins)
+- Scatter your project across different directories (e.g. core + plugins)
 - Support for namespaces (follows the directory structure)
 - Automatic discovery and registration of modules
 - Module instantiation through factories, constructors or plain obejcts
@@ -152,14 +152,16 @@ Now somewhere else in your project you can register all your routes:
 
 ```javascript
 // file: /core/expressApp.js
+
 ...
+
 module.exports = function(express, registerRoutes) {
     var self = {
         express: express(),
         initializeApp: function() {
             ...
 
-            return registerRoutes.sequence(self.express);
+            return registerRoutes.invoke(self.express);
         }
     }
     return self;
@@ -178,28 +180,28 @@ var scatter = new Scatter({
     roots: [
         __dirname + '/components/*',
         __dirname + '/core'
-    ],
-    npmRequire: function(name) {
-        return require(name);
-    },
+    ]
 });
 
-scatter.getService('initializeApp').sequence().then(function() {
+scatter.load('svc!initializeApp').invoke().then(function() {
     console.log('App initialized');
 });
 ```
 
-Notice you require a service exactly in the same way you require a module! **The service become a dependency**!
+Notice you require a service exactly in the same way you require a module! **The service becomes a dependency**!
 
-Also notice how you can require the express npm module with `npm!express`. This is not required, you can still use the normal `require` for it, but it's adviceable.
+Also notice how you can require the express npm module with `npm!express`. This is not required, you can still use the
+normal `require` for it, but it's adviced if you are using dependencies that need to be shared across scatter-ed modules.
 
 Another cool thing, is that the three modules do not know of the existence of each other, they are totally decoupled.
 
+# Documentation
 
+## Scatter
 
-## More to come...
+## Module instantiation
 
+## The `__scattered` descriptor
 
+## Services
 
-## License
-MIT
