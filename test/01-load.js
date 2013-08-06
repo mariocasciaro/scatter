@@ -8,10 +8,13 @@ var TEST_DIR = __dirname + '/01-load/';
 
 describe('Scatter basic loading',function(){
   describe("load", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/basic'
-      ]
+    var scatter;
+    before(function() {
+      scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/basic'
+        ]
+      });
     });
   
     it('should load and return a module', function(done) {
@@ -47,10 +50,13 @@ describe('Scatter basic loading',function(){
 
 
   describe("load", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/types'
-      ]
+    var scatter;
+    before(function() {
+      scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/types'
+        ]
+      });
     });
 
     it('should not explode with a NULL module', function(done) {
@@ -86,11 +92,15 @@ describe('Scatter basic loading',function(){
 
 
   describe("Dependency injection", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/di'
-      ]
+    var scatter;
+    before(function() {
+      scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/di'
+        ]
+      });
     });
+
 
     it('should inject modules in factory', function(done) {
       scatter.load('modules/RequireFactory').then(function(mod) {
@@ -140,14 +150,14 @@ describe('Scatter basic loading',function(){
   
   
   describe("2 base paths", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/2roots/base1',
-        TEST_DIR + '/2roots/base2'
-      ]
-    });
-
     it('should form a unique namespace', function(done) {
+      var scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/2roots/base1',
+          TEST_DIR + '/2roots/base2'
+        ]
+      });
+
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
@@ -156,13 +166,13 @@ describe('Scatter basic loading',function(){
   });
   
   describe("Base paths using globs", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/2roots/base*'
-      ]
-    });
-
     it('should expand globs', function(done) {
+      var scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/2roots/base*'
+        ]
+      });
+
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
@@ -171,15 +181,15 @@ describe('Scatter basic loading',function(){
   });
   
   describe("assemble", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/2rootsAssemble/base1',
-        TEST_DIR + '/2rootsAssemble/base2'
-      ]
-    });
-    
-    
+    var scatter;
     before(function(){
+      scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/2rootsAssemble/base1',
+          TEST_DIR + '/2rootsAssemble/base2'
+        ]
+      });
+
       scatter.assemble();
     });
 
@@ -199,14 +209,13 @@ describe('Scatter basic loading',function(){
   
   
   describe("scoped assemble", function() {
-    var scatter = new Scatter({
-      roots: [
-        TEST_DIR + '/2rootsScopedAssemble/base1',
-        TEST_DIR + '/2rootsScopedAssemble/base2'
-      ]
-    });
-
     it('should load only matching modules in advance', function() {
+      var scatter = new Scatter({
+        roots: [
+          TEST_DIR + '/2rootsScopedAssemble/base1',
+          TEST_DIR + '/2rootsScopedAssemble/base2'
+        ]
+      });
       scatter.assemble("namespace");
       
       var inspector = require(TEST_DIR + '/2rootsScopedAssemble/inspector');
@@ -239,6 +248,17 @@ describe('Scatter basic loading',function(){
       scatter.load('npm!lodash').then(function(mod) {
         expect(mod).to.exist;
         expect(mod.VERSION).to.be.equal(require('lodash').VERSION);
+        done();
+      }).otherwise(done);
+    });
+
+    it('should discover npm modules', function(done) {
+      var scatter = new Scatter({
+        appRoot: TEST_DIR + '/packageMultiRoots'
+      });
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
       }).otherwise(done);
     });
