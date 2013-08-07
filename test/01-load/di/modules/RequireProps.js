@@ -4,7 +4,7 @@ module.exports = function() {
 };
 
 module.exports.__scattered = {
-  mode: 'constructor',
+  type: 'constructor',
   properties: {dep: 'DepFactory'}
 };
 

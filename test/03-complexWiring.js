@@ -8,7 +8,9 @@ describe('Scatter Complex wiring',function() {
     var scatter = new Scatter({
       roots: [
         __dirname + '/03-complexWiring/loopFactories'
-      ]
+      ],
+      initializeTimeout: 200,
+      instatiateTimeout: 200
     });
 
     it('should cause deadlock exception', function(done) {
@@ -31,7 +33,9 @@ describe('Scatter Complex wiring',function() {
       scatter = new Scatter({
         roots: [
           __dirname + '/03-complexWiring/loopOnInit'
-        ]
+        ],
+        initializeTimeout: 200,
+        instatiateTimeout: 200
       });
     });
 
@@ -103,7 +107,9 @@ describe('Scatter Complex wiring',function() {
     var scatter = new Scatter({
       roots: [
         __dirname + '/03-complexWiring/longLoopDeadlock'
-      ]
+      ],
+      initializeTimeout: 200,
+      instatiateTimeout: 200
     });
 
     it('should cause deadlock exception', function(done) {
@@ -135,7 +141,9 @@ describe('Scatter Complex wiring',function() {
     var scatter = new Scatter({
       roots: [
         __dirname + '/03-complexWiring/loopOnInit'
-      ]
+      ],
+      initializeTimeout: 200,
+      instatiateTimeout: 200
     });
 
     it('should find deadlocks in initialization', function(done) {
@@ -154,7 +162,9 @@ describe('Scatter Complex wiring',function() {
     var scatter = new Scatter({
       roots: [
         __dirname + '/03-complexWiring/loopFactories'
-      ]
+      ],
+      initializeTimeout: 200,
+      instatiateTimeout: 200
     });
 
     it('should find deadlocks in instantiation', function(done) {

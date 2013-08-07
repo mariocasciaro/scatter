@@ -201,9 +201,18 @@ describe('Scatter basic loading',function(){
       expect(inspector).to.have.property('b2NamespaceModule1' , true);
     });
     
-    it('should ignore excluded directories', function() {
+    it('should ignore excluded directories', function(done) {
       var inspector = require(__dirname + '/01-load/2rootsAssemble/inspector');
       expect(inspector).to.not.have.property('b1Module3');
+      expect(inspector).to.not.have.property('b1Module4');
+      scatter.load('ignored/ignorethis/Module3').then(function() {
+        done(new Error("No exception thrown"));
+      }).otherwise(function(err){
+        expect(err).to.match(/Cannot find/);
+        expect(inspector).to.not.have.property('b1Module3');
+        expect(inspector).to.not.have.property('b1Module4');
+        done();
+      }).otherwise(done);
     });
   });
   

@@ -1,7 +1,7 @@
 {
   "scatter": {
     "ignore": [
-      "ignored"
+      "ignored/**"
     ]
   }
 }
