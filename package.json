@@ -24,7 +24,7 @@
     "mocha": "~1.12.0"
   },
   "scripts": {
-    "test": "mocha test/*.js --reporter spec"
+    "test": "node_modules/.bin/mocha test/*.js --reporter spec"
   },
   "keywords": [
     "dependency injection",

@@ -8,5 +8,3 @@ module.exports.__scattered = {
   type: 'constructor',
   args: ['DepFactory']
 };
-
-

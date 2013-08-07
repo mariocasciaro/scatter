@@ -7,11 +7,8 @@ describe('Scatter Services',function(){
   describe("provider and scoping", function() {
     var scatter;
     beforeEach(function() {
-      scatter = new Scatter({
-        roots: [
-          __dirname + '/02-services/scope'
-        ]
-      });
+      scatter = new Scatter();
+      scatter.addRoots(__dirname + '/02-services/scope');
     });
 
     it('should load a provider', function(done) {
@@ -57,10 +54,10 @@ describe('Scatter Services',function(){
   });
 
   describe("order and execution modes", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/02-services/orderAndModes'
-      ]
+    var scatter;
+    before(function() {
+      scatter = new Scatter();
+      scatter.addRoots(__dirname + '/02-services/orderAndModes');
     });
 
     it('should maintain order', function(done) {
@@ -116,10 +113,10 @@ describe('Scatter Services',function(){
 
 
   describe("Injected service", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/02-services/injectedService'
-      ]
+    var scatter;
+    before(function() {
+      scatter = new Scatter();
+      scatter.addRoots(__dirname + '/02-services/injectedService');
     });
 
     it('should be given as dependency', function(done) {

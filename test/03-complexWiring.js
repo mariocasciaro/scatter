@@ -6,12 +6,10 @@ describe('Scatter Complex wiring',function() {
   
   describe("Loop  in factories", function() {
     var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/loopFactories'
-      ],
       initializeTimeout: 200,
       instatiateTimeout: 200
     });
+    scatter.addRoots(__dirname + '/03-complexWiring/loopFactories');
 
     it('should cause deadlock exception', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
@@ -31,12 +29,10 @@ describe('Scatter Complex wiring',function() {
     
     beforeEach(function() {
       scatter = new Scatter({
-        roots: [
-          __dirname + '/03-complexWiring/loopOnInit'
-        ],
         initializeTimeout: 200,
         instatiateTimeout: 200
       });
+      scatter.addRoots(__dirname + '/03-complexWiring/loopOnInit');
     });
 
     it('Load module should cause deadlock', function(done) {
@@ -62,11 +58,8 @@ describe('Scatter Complex wiring',function() {
 
 
   describe("Mixed loop factory/inject 1 (race condition)", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/mixedLoop1'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/03-complexWiring/mixedLoop1');
 
     it('should NOT cause deadlock', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
@@ -82,11 +75,8 @@ describe('Scatter Complex wiring',function() {
 
 
   describe("Mixed loop factory/inject 2 (race condition)", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/mixedLoop2'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/03-complexWiring/mixedLoop2');
 
     it('should NOT cause deadlock', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
@@ -105,12 +95,10 @@ describe('Scatter Complex wiring',function() {
 
   describe("Branched loop with 1 deadlock", function() {
     var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/longLoopDeadlock'
-      ],
       initializeTimeout: 200,
       instatiateTimeout: 200
     });
+    scatter.addRoots(__dirname + '/03-complexWiring/longLoopDeadlock');
 
     it('should cause deadlock exception', function(done) {
       scatter.load('A').then(function(dep) {
@@ -124,11 +112,8 @@ describe('Scatter Complex wiring',function() {
 
 
   describe("Branched loop with no deadlocks", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/longLoop'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/03-complexWiring/longLoop');
 
     it('should not cause exception or locks', function(done) {
       scatter.load('A').then(function(dep) {
@@ -139,12 +124,10 @@ describe('Scatter Complex wiring',function() {
 
   describe("bootstrapAll()", function() {
     var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/loopOnInit'
-      ],
       initializeTimeout: 200,
       instatiateTimeout: 200
     });
+    scatter.addRoots(__dirname + '/03-complexWiring/loopOnInit');
 
     it('should find deadlocks in initialization', function(done) {
       scatter.bootstrapAll().then(function() {
@@ -160,12 +143,10 @@ describe('Scatter Complex wiring',function() {
 
   describe("bootstrapAll()", function() {
     var scatter = new Scatter({
-      roots: [
-        __dirname + '/03-complexWiring/loopFactories'
-      ],
       initializeTimeout: 200,
       instatiateTimeout: 200
     });
+    scatter.addRoots(__dirname + '/03-complexWiring/loopFactories');
 
     it('should find deadlocks in instantiation', function(done) {
       scatter.bootstrapAll().then(function() {

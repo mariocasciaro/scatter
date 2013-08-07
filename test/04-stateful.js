@@ -5,11 +5,8 @@ var expect = require('chai').expect,
 
 describe('Scatter stateful container',function(){
   describe("load a stateful module", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/04-stateful/oneModule'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/04-stateful/oneModule');
     var dyn = scatter.newStatefulContainer({});
 
     it('returns a new module', function(done) {
@@ -43,11 +40,8 @@ describe('Scatter stateful container',function(){
   
   
   describe("Dependency injection", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/04-stateful/di'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/04-stateful/di');
 
     var dyn = scatter.newStatefulContainer({});
     it('injects dynamic and static modules properly', function(done) {
@@ -87,11 +81,8 @@ describe('Scatter stateful container',function(){
 
 
   describe("Dynamic module services", function() {
-    var scatter = new Scatter({
-      roots: [
-        __dirname + '/04-stateful/services'
-      ]
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/04-stateful/services');
 
     it('static provider invoke only static services', function(done) {
       scatter.load('svc!svc').then(function(svc) {
@@ -119,9 +110,8 @@ describe('Scatter stateful container',function(){
 
 
   describe("Deadlock in dynamic modules", function() {
-    var scatter = new Scatter({
-      roots: [__dirname + '/04-stateful/deadlock']
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/04-stateful/deadlock');
 
     it('should throw and exception', function(done) {
       var dyn = scatter.newStatefulContainer({});
@@ -137,9 +127,8 @@ describe('Scatter stateful container',function(){
 
 
   describe("Context as dependency", function() {
-    var scatter = new Scatter({
-      roots: [__dirname + '/04-stateful/context']
-    });
+    var scatter = new Scatter();
+    scatter.addRoots(__dirname + '/04-stateful/context');
 
     it('should be valid', function(done) {
       var dyn = scatter.newStatefulContainer({data: "OK!"});
