@@ -11,24 +11,23 @@ Scatter allows you to split your projects in components located in **separated r
 ## Features
 
 - Scatter your project across different directories (e.g. core + plugins)
-- Support for namespaces (follows the directory structure)
+- Support for namespaces (by default it follows the directory structure, like Java packages)
 - Automatic discovery and registration of modules
-- Module instantiation through factories, constructors or plain obejcts
+- Module instantiation through factories, constructors or plain objects
 - Instantiate and initialize modules asynchronously using promises
 - Support for hooks (Scatter services), with sync/async execution
 
 ## Getting started
 
-Intitialize the Scatter container and define your roots:
+Initialize the Scatter container and define your roots:
 ```javascript
 // file: /app.js
 
-var scatter = new Scatter({
-    roots: [
-        __dirname + '/components/*',
-        __dirname + '/core'
-    ]
-});
+var scatter = new Scatter();
+scatter.addRoots([
+  __dirname + '/components/*',
+  __dirname + '/core'
+]);
 ```
 
 Define your first simple module:
@@ -102,12 +101,11 @@ Now our `app.js` will magically print  `Hello Blue Planet!`. This is possible be
 ```javascript
 // file: /app.js
 
-var scatter = new Scatter({
-    roots: [
-        __dirname + '/components/*',
-        __dirname + '/core'
-    ]
-});
+var scatter = new Scatter();
+scatter.addRoots([
+  __dirname + '/components/*',
+  __dirname + '/core'
+]);
 ```
 
 ## Scatter services
@@ -176,12 +174,12 @@ Then the app entry point:
 ```javascript
 // file: /app.js
 
-var scatter = new Scatter({
-    roots: [
-        __dirname + '/components/*',
-        __dirname + '/core'
-    ]
-});
+var scatter = new Scatter();
+scatter.addRoots([
+  __dirname + '/components/*',
+  __dirname + '/core'
+]);
+scatter.setNodeModulesDir(__dirname + '/core');
 
 scatter.load('svc!initializeApp').invoke().then(function() {
     console.log('App initialized');
@@ -191,7 +189,7 @@ scatter.load('svc!initializeApp').invoke().then(function() {
 Notice you require a service exactly in the same way you require a module! **The service becomes a dependency**!
 
 Also notice how you can require the express npm module with `npm!express`. This is not required, you can still use the
-normal `require` for it, but it's adviced if you are using dependencies that need to be shared across scatter-ed modules.
+normal `require` for it, but it's advised if you are using dependencies that need to be shared across scatter-ed modules.
 
 Another cool thing, is that the three modules do not know of the existence of each other, they are totally decoupled.
 
