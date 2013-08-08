@@ -1,5 +1,6 @@
 
 var expect = require('chai').expect,
+  fs = require('fs'),
   Scatter = require('../lib');
 
 
@@ -240,6 +241,36 @@ describe('Scatter basic loading', function() {
       scatter.load('npm!lodash').then(function(mod) {
         expect(mod).to.exist;
         expect(mod.VERSION).to.be.equal(require('lodash').VERSION);
+      }).then(function() {
+        return scatter.load('Module1').then(function(mod) {
+          expect(mod).to.have.deep.property('dep.prop', 'mod2');
+          done();
+        });
+      }).otherwise(done);
+    });
+    
+    it('should discover modules under node_modules', function(done) {
+      var scatter = new Scatter();
+      scatter.setNodeModulesDir(TEST_DIR + '/2rootsAutodiscover');
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'mod2');
+        done();
+      }).otherwise(done);
+    });
+    
+    it('should discover roots under symlinked dirs', function(done) {
+      var scatter = new Scatter();
+      var link = TEST_DIR + "/2rootsAutodiscoverLink/base2";
+      if(fs.existsSync(link)) {
+        fs.unlink(link);
+      }
+      fs.symlinkSync(TEST_DIR + "/2rootsAutodiscover/base2", link);
+      
+      scatter.setNodeModulesDir(TEST_DIR + '/2rootsAutodiscoverLink');
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
       }).otherwise(done);
     });

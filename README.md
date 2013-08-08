@@ -179,7 +179,7 @@ scatter.addRoots([
   __dirname + '/components/*',
   __dirname + '/core'
 ]);
-scatter.setNodeModulesDir(__dirname + '/core');
+scatter.setNodeModulesDir(__dirname + '/node_modules');
 
 scatter.load('svc!initializeApp').invoke().then(function() {
     console.log('App initialized');
