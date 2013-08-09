@@ -9,7 +9,7 @@ module.exports.prototype = {
   }
 };
 
-module.exports.__scattered = {
+module.exports.__scatter = {
   initialize: 'init'
 };
 

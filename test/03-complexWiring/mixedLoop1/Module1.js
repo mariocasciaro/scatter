@@ -9,7 +9,7 @@ module.exports = function() {
 
   return self;
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   provides: {trigger_bootstrap: []},
   properties: ['Module2']
 };

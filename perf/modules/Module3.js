@@ -7,7 +7,7 @@ module.exports = function(Module4) {
     }
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   isStateful: true,
   args: ['Module4'],
   provides: ['a_dyn_service']

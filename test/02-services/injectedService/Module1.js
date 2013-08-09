@@ -7,7 +7,7 @@ module.exports = {
     return module.exports.simple_service_svc.sequence();
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   properties: {simple_service_svc: 'svc!simple_service'},
   provides: {
     simple_service: {},

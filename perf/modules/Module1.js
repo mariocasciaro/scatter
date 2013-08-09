@@ -13,6 +13,6 @@ module.exports = {
     return deferred.promise;
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   provides: ['a_service', 'a_promised_service']
 };

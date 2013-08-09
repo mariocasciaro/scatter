@@ -4,7 +4,7 @@ module.exports = function(depFactory) {
   this.dep = depFactory;
 };
 
-module.exports.__scattered = {
+module.exports.__scatter = {
   type: 'constructor',
   args: ['DepFactory']
 };

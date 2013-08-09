@@ -10,7 +10,7 @@ module.exports = function(Module1) {
     }
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   args: ['Module1'],
   provides: ['a_service', 'a_promised_service']
 };

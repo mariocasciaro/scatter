@@ -16,7 +16,7 @@ module.exports = {
     throw new Error("Catch this!");
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   provides: {
     simple_service: {before: 'Module3', after: 'l1/Module2'},
     chain: {before: ['l1/Module2']},

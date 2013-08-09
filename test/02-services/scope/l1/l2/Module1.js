@@ -4,6 +4,6 @@ module.exports = {
     return "l1/l2/Module1";
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   provides: ['simple_service']
 };

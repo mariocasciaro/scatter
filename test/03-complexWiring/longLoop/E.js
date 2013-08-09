@@ -3,6 +3,6 @@ module.exports = function() {
 
 };
 
-module.exports.__scattered = {
+module.exports.__scatter = {
   properties: {A: 'A'}
 };

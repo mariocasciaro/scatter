@@ -6,7 +6,7 @@ module.exports = function(depObj) {
   };
 };
 
-module.exports.__scattered = {
+module.exports.__scatter = {
   bootstrapMode: 'factory',
   args: ['anamespace/DepObj']
 };

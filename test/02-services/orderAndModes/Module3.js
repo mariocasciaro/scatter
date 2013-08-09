@@ -13,7 +13,7 @@ module.exports = {
     return delay(200, undefined);
   }
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
   provides: {
     simple_service: {},
     chain: {after: ['l1/Module2']},
