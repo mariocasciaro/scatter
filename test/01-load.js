@@ -262,8 +262,10 @@ describe('Scatter basic loading', function() {
     it('should discover roots under symlinked dirs', function(done) {
       var scatter = new Scatter();
       var link = TEST_DIR + "/2rootsAutodiscoverLink/base2";
-      if(fs.existsSync(link)) {
-        fs.unlink(link);
+      try {
+        fs.unlinkSync(link);
+      } catch(err) {
+        //nothing here, this workaround is just for problem with invalid symlinks
       }
       fs.symlinkSync(TEST_DIR + "/2rootsAutodiscover/base2", link);
       
