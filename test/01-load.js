@@ -1,6 +1,7 @@
 
 var expect = require('chai').expect,
   fs = require('fs'),
+  rimraf = require('rimraf'),
   Scatter = require('../lib');
 
 
@@ -263,8 +264,10 @@ describe('Scatter basic loading', function() {
       var scatter = new Scatter();
       var link = TEST_DIR + "/2rootsAutodiscoverLink/base2";
       try {
-        fs.unlinkSync(link);
+        rimraf.sync(link);
+        //if it still exists, it means it
       } catch(err) {
+        console.log(err);
         //nothing here, this workaround is just for problem with invalid symlinks
       }
       fs.symlinkSync(TEST_DIR + "/2rootsAutodiscover/base2", link);
