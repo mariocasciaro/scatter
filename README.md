@@ -55,7 +55,7 @@ scatter.load('hello').then(function(mod) {
 
 ## Dependency Injection
 
-Using the `__scattered` descriptor it's possible to control how the module is instantiated, but more importantly, how it's wired with other modules.
+Using the `__scatter` descriptor it's possible to control how the module is instantiated, but more importantly, how it's wired with other modules.
 
 The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using factories.
 
@@ -71,7 +71,7 @@ module.exports = function(earth) {
         }
     };
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
     args: ['planets/earth']
 };
 ```
@@ -112,7 +112,7 @@ scatter.addRoots([
 
 One of the most powerful features of Scatter is the services framework. You can use it to implement extension points, hooks or emit events.
 
-To define a service, create a function in your module then declare it in your `__scattered` descriptor. Here is an example of how you can use it to register some routes in an `express` application.
+To define a service, create a function in your module then declare it in your `__scatter` descriptor. Here is an example of how you can use it to register some routes in an `express` application.
 
 ```javascript
 // file: /components/routes/home.js
@@ -125,7 +125,7 @@ var self = module.exports = {
         express.get('/', self.home);
     }
 };
-self.__scattered = {
+self.__scatter = {
     provides: 'register'
 }
 ```
@@ -141,7 +141,7 @@ var self = module.exports = {
         express.get('/person', self.view);
     }
 };
-self.__scattered = {
+self.__scatter = {
     provides: 'register'
 }
 ```
@@ -164,7 +164,7 @@ module.exports = function(express, registerRoutes) {
     }
     return self;
 };
-module.exports.__scattered = {
+module.exports.__scatter = {
     args: ['npm!express', 'svc!routes/register'],
     provides: ['initializeApp']
 }
@@ -199,7 +199,7 @@ Another cool thing, is that the three modules do not know of the existence of ea
 
 ## Module instantiation
 
-## The `__scattered` descriptor
+## The `__scatter` descriptor
 
 ## Services
 
