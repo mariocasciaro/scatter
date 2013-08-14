@@ -4,9 +4,8 @@ var Scatter = require('../lib'),
   module1 = require('./modules/Module1.js'),
   module2 = require('./modules/Module2.js')(module1);
 
-var scatter = new Scatter({
-  roots: [__dirname + "/modules"]
-});
+var scatter = new Scatter();
+scatter.addRoots([__dirname + "/modules"]);
 
 var ITERATIONS = 1000;
 console.log('Scatter invoke performance over ' + ITERATIONS + ' samples');

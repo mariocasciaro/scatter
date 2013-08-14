@@ -2,7 +2,7 @@
 
 module.exports = function() {
   var self = {
-    trigger_bootstrap: function(){
+    trigger_bootstrap: function() {
       return 1;
     }
   };

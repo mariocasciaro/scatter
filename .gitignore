@@ -3,3 +3,4 @@ node_modules
 .settings
 .idea
 test/01-load/2rootsAutodiscoverLink/base2
+npm-debug.log

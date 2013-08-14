@@ -58,7 +58,11 @@ describe('Scatter Complex wiring',function() {
 
 
   describe("Mixed loop factory/inject 1 (race condition)", function() {
-    var scatter = new Scatter();
+    var scatter = new Scatter({
+      //log: function(level, message) {
+      //  console.log(message);
+      //}
+    });
     scatter.addRoots(__dirname + '/03-complexWiring/mixedLoop1');
 
     it('should NOT cause deadlock', function(done) {

@@ -130,4 +130,21 @@ describe('Scatter Services',function(){
       }).otherwise(done);
     });
   });
+
+  describe("2PhaseLoading", function() {
+    var scatter;
+    before(function() {
+      scatter = new Scatter();
+      scatter.addRoots(__dirname + '/02-services/2phaseLoading');
+    });
+
+    it('should load and initialize all dependencies', function(done) {
+      scatter.load('svc!service').then(function(svc) {
+        return svc.any().then(function(result) {
+          expect(result).to.be.equal('Module3');
+          done();
+        });
+      }).otherwise(done);
+    });
+  });
 });

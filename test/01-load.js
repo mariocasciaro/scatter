@@ -90,7 +90,11 @@ describe('Scatter basic loading', function() {
   describe("Dependency injection", function() {
     var scatter;
     before(function() {
-      scatter = new Scatter();
+      scatter = new Scatter({
+      //  log: function(level, message) {
+      //    console.log(message);
+      //  }
+      });
       scatter.addRoots(TEST_DIR + '/di');
     });
 
