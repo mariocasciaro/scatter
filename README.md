@@ -8,6 +8,14 @@ Scatter allows you to split your projects in components located in **separated r
 
 **WARNING**: In this phase, Scatter API are subject to change frequently. Please submit your feedback and help stabilize its interface.
 
+
+1. [Features](#features)
+2. [Getting Started](#getting-started)
+3. [Dependency Injection](#dependency-injection)
+4. [Services](#services)
+5. [API Docs](#api)
+
+
 ## Features
 
 - Scatter your project across different directories (e.g. core + plugins)
@@ -17,23 +25,32 @@ Scatter allows you to split your projects in components located in **separated r
 - Instantiate and initialize modules asynchronously using promises
 - Support for hooks (Scatter services), with sync/async execution
 
+
 ## Getting started
 
 Initialize the Scatter container and define your roots:
-```javascript
-// file: /app.js
 
+`/app.js`
+```javascript
 var scatter = new Scatter();
 scatter.addRoots([
-  __dirname + '/components/*',
+  __dirname + '/plugins/*',
   __dirname + '/core'
 ]);
+
+//Load a module
+scatter.load('hello').then(function(mod) {
+    mod.sayHello();
+});
+
 ```
 
-Define your first simple module:
-```javascript
-// file: /core/hello.js
+(The code above is just for demonstration, usually you will never need to manually `load` a module, modules are normally wired using [dependency injection](#dependency-injection) )
 
+Define the module:
+
+`/core/hello.js`
+```javascript
 module.exports = {
     sayHello: function() {
         console.log("Hello scattered world!");
@@ -41,82 +58,82 @@ module.exports = {
 }
 ```
 
-Then load it:
-```javascript
-// file: /app.js
+In Scatter, each root represents the starting point for the module namespace.
+In the example above, the module resolver will look for a module named `hello` in this order:
 
-...
+1. `<path to project>/plugins/*/hello.js`
+2. `<path to project>/core/hello.js`
 
-//Scatter uses promises at it's core
-scatter.load('hello').then(function(mod) {
-    mod.sayHello();
-});
-```
+With this simple logic, you can **scatter** your source code across separate folders, splitting your project as you like, based on functionalities, aspects, concepts, and with that automatically provide a way to modularly extend your project.
+
 
 ## Dependency Injection
 
-Using the `__scatter` descriptor it's possible to control how the module is instantiated, but more importantly, how it's wired with other modules.
+Dependency injection is achieved by defining a `__scatter` descriptor in your module. With it you can control how the module is instantiated, but more importantly, how it's wired with other modules.
 
-The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using factories.
+The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using **factories**.
 
-Let's refactor our  `hello.js` file above to load other modules:
 
 ```javascript
-// file: /core/hello.js
 
-module.exports = function(earth) {
+module.exports = function(person) {
     return {
         sayHello: function() {
-            console.log("Hello " + earth.name + "!");
+            console.log("Hello " + person.name + "!");
         }
     };
 };
 module.exports.__scatter = {
-    args: ['planets/earth']
+    args: ['models/person']
 };
 ```
 
-```javascript
-// file: /core/planets/earth.js
+You can also use a **constructor**:
 
-module.exports = {
-    name: 'Earth'
+```javascript
+function Hello(person) {
+    this.person = person;
+};
+Hello.prototype = {};
+Hello.prototype.sayHello: function() {
+    console.log("Hello " + person.name + "!");
+}
+
+module.exports = Hello;
+module.exports.__scatter = {
+    args: ['models/person']
+};
+
+```
+
+You can even inject **properties** directly into the module instance, with modules defined as object literals, factories or constructors (the example below uses an object literal): 
+
+```javascript
+var self = module.exports = {
+    sayHello: function() {
+        console.log("Hello " + self.person.name + "!");
+    }
+};
+module.exports.__scatter = {
+    properties: {
+        person: 'models/person'
+    } 
 };
 ```
 
-After the changes above, as expected, our `app.js` will now print `Hello Earth!`.
 
-Ok, now it comes the cool part. Let's say we now realize that we are using a too "cold" name for our planet and we want to give it a more poetic "Blue Planet". **There is no need to change the core code of our project!** Just create a new module in the `components` directory:
-
-
-```javascript
-// file: /components/poetic/planets/earth.js
-
-module.exports = {
-    name: 'Blue Planet'
-};
-```
-
-Now our `app.js` will magically print  `Hello Blue Planet!`. This is possible because, when creating our `scatter` container, we specified that the `components/*` directories has higher priority than the `core` root. Remember?
-```javascript
-// file: /app.js
-
-var scatter = new Scatter();
-scatter.addRoots([
-  __dirname + '/components/*',
-  __dirname + '/core'
-]);
-```
-
-## Scatter services
+## Services
 
 One of the most powerful features of Scatter is the services framework. You can use it to implement extension points, hooks or emit events.
 
-To define a service, create a function in your module then declare it in your `__scatter` descriptor. Here is an example of how you can use it to register some routes in an `express` application.
+To define a service, create a function in your module then declare it in your `__scatter` descriptor, using the `provides` property. 
 
+To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`.
+
+Here is an example of how you can use it to register some routes in an `express` application.
+
+`/components/home/routes/home.js`:
 ```javascript
-// file: /components/routes/home.js
-
 var self = module.exports = {
     home: function(req, res) {
         ...
@@ -130,8 +147,8 @@ self.__scatter = {
 }
 ```
 
+`/components/aPlugin/routes/person.js`:
 ```javascript
-// file: /components/routes/person.js
 
 var self = module.exports = {
     view: function(req, res) {
@@ -146,60 +163,87 @@ self.__scatter = {
 }
 ```
 
-Now somewhere else in your project you can register all your routes:
+Now somewhere else in your project you can register all your routes at once using the `register` service:
 
+`/core/expressApp.js`:
 ```javascript
-// file: /core/expressApp.js
-
 ...
+var express = require('express');
 
-module.exports = function(express, registerRoutes) {
+module.exports = function(registerRoutes) {
     var self = {
-        express: express(),
         initializeApp: function() {
             ...
 
-            return registerRoutes.invoke(self.express);
+            return registerRoutes.sequence(self.express);
         }
     }
     return self;
 };
 module.exports.__scatter = {
-    args: ['npm!express', 'svc!routes/register'],
+    args: ['svc!routes/register'],
     provides: ['initializeApp']
 }
 ```
 Then the app entry point:
 
+`/app.js`:
 ```javascript
-// file: /app.js
-
 var scatter = new Scatter();
 scatter.addRoots([
   __dirname + '/components/*',
   __dirname + '/core'
 ]);
-scatter.setNodeModulesDir(__dirname + '/node_modules');
 
-scatter.load('svc!initializeApp').invoke().then(function() {
+scatter.load('svc!initializeApp').sequence().then(function() {
     console.log('App initialized');
 });
 ```
 
-Notice you require a service exactly in the same way you require a module! **The service becomes a dependency**!
+Notice how you can require a service exactly in the same way you require a module! **The service becomes a dependency**!
 
-Also notice how you can require the express npm module with `npm!express`. This is not required, you can still use the
-normal `require` for it, but it's advised if you are using dependencies that need to be shared across scatter-ed modules.
+Another cool thing, is that the three modules do not know of the existence of each other, they are totally **decoupled**.
 
-Another cool thing, is that the three modules do not know of the existence of each other, they are totally decoupled.
+If you need a particular order of execution between your services, you can easily define it by specifying it in the `__scatter` descriptor, for example:
 
-# Documentation
+`/components/aPlugin/routes/person.js`:
+```javascript
+...
+module.exports.__scatter = {
+    ...
+    provides: {
+        register: {
+            after: "routes/home"
+        }
+    }
+}
+```
+
+
+# API
+
+1. [Scatter](#scatter)
+    * [constructor](#scatter-constructor)
+    * [scatter.addRoots](#scatteraddroots)
+    * [scatter.discoverRoots](#scatterdiscoverroots)
+    * [scatter.setNodeModulesDir](#scattersetnodemodulesdir)
+    * [scatter.load](#scatterload)
+    * [scatter.registerModule](#scatterregistermodule)
+    * [scatter.registerModuleInstance](#scatteregistermoduleinstance)
+2. [__scatter descriptor](#__scatter-descriptor)
+    * [args](#args)
+    * [properties](#properties)
+    * [provides](#provides)
+    * [initialize](#initialize)
+    * [type](#type)
+3. [Dependency types](#injected-dependencies)
+    * [Modules](#modules)
+    * [Services](#services)
+    * [Npm modules](#npm-modules)
+4. [package.json extensions](#packagejson-extensions)
+
 
 ## Scatter
 
-## Module instantiation
 
-## The `__scatter` descriptor
-
-## Services
 
