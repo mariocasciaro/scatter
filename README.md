@@ -222,11 +222,11 @@ module.exports.__scatter = {
 
 # API
 
-1. [Scatter](#scatter)
+1. [Scatter](#scatter-1)
     * [constructor](#scatter-constructor)
-    * [scatter.addRoots](#scatteraddroots)
-    * [scatter.discoverRoots](#scatterdiscoverroots)
-    * [scatter.setNodeModulesDir](#scattersetnodemodulesdir)
+    * [scatter.addRoots](#scatter-addroots)
+    * [scatter.discoverRoots](#scatter-discoverroots)
+    * [scatter.setNodeModulesDir](#scatter-setnodemodulesdir)
     * [scatter.load](#scatterload)
     * [scatter.registerModule](#scatterregistermodule)
     * [scatter.registerModuleInstance](#scatteregistermoduleinstance)
@@ -239,11 +239,91 @@ module.exports.__scatter = {
 3. [Dependency types](#injected-dependencies)
     * [Modules](#modules)
     * [Services](#services)
+    * [Scatter container](#scatter-container)
     * [Npm modules](#npm-modules)
 4. [package.json extensions](#packagejson-extensions)
 
 
 ## Scatter
+
+The `Scatter` object is the entry point to create a brand new DI container for an application.
+
+<a name="scatter-constructor" />
+### new Scatter(options)
+
+Create a new Scatter DI container.
+
+__Arguments__
+
+* `options` - An object containing a set of config options
+    * `log` - A function in the format `function(level, message)` that will be used by Scatter to log messages. `level` is one of the npm log levels (e.g. silly, debug, verbose,warn, error).
+    * `startProfiling` - A function in the format `function([sessionName, logLevel])` and returns that an object used for profiling some of the Scatter internals. This object should contai 3 methods:
+        * `start()`
+        * `pause()`
+        * `end()`
+    * `instantiateTimeout` - The number of milliseconds to wait for a module to be instantiated. Defaults to 700ms.
+    * `initializeTimeout` - The number of milliseconds to wait for a module to be initialized. Defaults to 700ms.
+
+__Example__
+
+```javascript
+var scatter = new Scatter({
+   log: function(level, message) {
+       console.log(level + ": " + message);
+   }
+});
+```
+
+<a name="scatter-addroots" />
+### scatter.addRoots(roots)
+
+Add one or more roots to the Scatter object, so they will be used to search for modules by the DI container. Roots added with this method don't need to contain a `package.json`, they are assumed to be Scatter module directories.
+
+__Arguments__
+* `roots` - A String (or Array of Strings) representing the root(s) to add. Supports glob syntax.
+
+__Example__
+
+```javascript
+var scatter = new Scatter();
+scatter.addRoots([__dirname + '/components/*', __dirname + '/core']);
+```
+
+<a name="scatter-discoverroots" />
+### scatter.discoverRoots(basePath)
+
+Walk recursively a directory to search for `package.json` describing Scatter roots. The `package.json` files must contain a `scatter` property:
+* If empty - the directory containing the `package.json` file will be added as module root.
+* if contains a `roots` property - the roots specified in the Array will be added as module roots.
+
+__Arguments__
+
+* `basePath` - String or Array of Strings, containing paths to use as starting point to discover module roots. Supports glob syntax.
+
+__Example__
+
+```sh
+components
+├── module1
+│   ├── lib
+│   └── package.json
+└── module2
+    └── src
+```
+
+```javascript
+var scatter = new Scatter();
+scatter.discoverRoots(__dirname + '/components');
+```
+
+`/components/module1/package.json`:
+```javascript
+{
+    "scatter": {}
+}
+```
+
+`components/module1` will be added as root, `components/module2` will NOT be added as it does not define a `package.json` with a `scatter` property.
 
 
 

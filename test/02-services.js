@@ -4,14 +4,14 @@ var expect = require('chai').expect,
 
 
 describe('Scatter Services',function(){
-  describe("provider and scoping", function() {
+  describe("service and scoping", function() {
     var scatter;
     beforeEach(function() {
       scatter = new Scatter();
       scatter.addRoots(__dirname + '/02-services/scope');
     });
 
-    it('should load a provider', function(done) {
+    it('should load a service', function(done) {
       scatter.load('svc!simple_service').then(function(svc) {
         expect(svc).to.have.property('sequence');
         expect(svc).to.have.property('any');
@@ -84,6 +84,15 @@ describe('Scatter Services',function(){
     it('should invoke for oneResult', function(done) {
       scatter.load('svc!one').then(function(svc) {
         return svc.any().then(function(result) {
+          expect(result).to.be.equal('Module1');
+          done();
+        });
+      }).otherwise(done);
+    });
+    
+    it('should invoke specific mode with dependency options', function(done) {
+      scatter.load('svc|any!one').then(function(svc) {
+        return svc().then(function(result) {
           expect(result).to.be.equal('Module1');
           done();
         });
