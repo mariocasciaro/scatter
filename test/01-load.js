@@ -13,7 +13,7 @@ describe('Scatter basic loading', function() {
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.addRoots(TEST_DIR + '/basic');
+      scatter.registerComponents(TEST_DIR + '/basic');
     });
   
     it('should load and return a module', function(done) {
@@ -52,7 +52,7 @@ describe('Scatter basic loading', function() {
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.addRoots(TEST_DIR + '/types');
+      scatter.registerComponents(TEST_DIR + '/types');
     });
 
     it('should not explode with a NULL module', function(done) {
@@ -95,7 +95,7 @@ describe('Scatter basic loading', function() {
       //    console.log(message);
       //  }
       });
-      scatter.addRoots(TEST_DIR + '/di');
+      scatter.registerComponents(TEST_DIR + '/di');
     });
 
 
@@ -146,10 +146,10 @@ describe('Scatter basic loading', function() {
   });
   
   
-  describe("2 base paths", function() {
+  describe("Multiple roots", function() {
     it('should form a unique namespace', function(done) {
       var scatter = new Scatter();
-      scatter.addRoots( [
+      scatter.registerComponents( [
         TEST_DIR + '/2roots/base1',
         TEST_DIR + '/2roots/base2'
       ]);
@@ -159,12 +159,20 @@ describe('Scatter basic loading', function() {
         done();
       }).otherwise(done);
     });
-  });
-  
-  describe("Base paths using globs", function() {
+
+    it('should include subcomponents from scatter.json', function(done) {
+      var scatter = new Scatter();
+      scatter.registerComponents(TEST_DIR + '/subcomponents');
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'mod2');
+        done();
+      }).otherwise(done);
+    });
+
     it('should expand globs', function(done) {
       var scatter = new Scatter();
-      scatter.addRoots(TEST_DIR + '/2roots/base*');
+      scatter.registerComponents(TEST_DIR + '/2roots/base*');
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
@@ -172,12 +180,13 @@ describe('Scatter basic loading', function() {
       }).otherwise(done);
     });
   });
+
   
   describe("assemble", function() {
     var scatter;
     before(function(){
       scatter = new Scatter();
-      scatter.addRoots([
+      scatter.registerComponents([
         TEST_DIR + '/2rootsAssemble/base1',
         TEST_DIR + '/2rootsAssemble/base2'
       ]);
@@ -212,7 +221,7 @@ describe('Scatter basic loading', function() {
   describe("scoped assemble", function() {
     it('should load only matching modules in advance', function() {
       var scatter = new Scatter();
-      scatter.addRoots([
+      scatter.registerComponents([
         TEST_DIR + '/2rootsScopedAssemble/base1',
         TEST_DIR + '/2rootsScopedAssemble/base2'
       ]);
@@ -227,36 +236,22 @@ describe('Scatter basic loading', function() {
   });
 
 
-  describe("autoresolver", function() {
-    it('should discover all roots in appDir', function(done) {
+  describe("npm dir loading", function() {
+    it('should load npm modules', function(done) {
       var scatter = new Scatter();
-      scatter.discoverRoots(TEST_DIR + '/2rootsAutodiscover');
-
-      scatter.load('Module1').then(function(mod) {
-        expect(mod).to.have.deep.property('dep.prop', 'mod2');
-        done();
-      }).otherwise(done);
-    });
-
-    it('should discover npm modules', function(done) {
-      var scatter = new Scatter();
-      scatter.discoverRoots(TEST_DIR + '/2rootsAutodiscover');
       scatter.setNodeModulesDir(__dirname + "/../node_modules");
 
       scatter.load('npm!lodash').then(function(mod) {
         expect(mod).to.exist;
         expect(mod.VERSION).to.be.equal(require('lodash').VERSION);
       }).then(function() {
-        return scatter.load('Module1').then(function(mod) {
-          expect(mod).to.have.deep.property('dep.prop', 'mod2');
-          done();
-        });
+        done();
       }).otherwise(done);
     });
     
     it('should discover modules under node_modules', function(done) {
       var scatter = new Scatter();
-      scatter.setNodeModulesDir(TEST_DIR + '/2rootsAutodiscover');
+      scatter.setNodeModulesDir(TEST_DIR + '/nodeModules');
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
@@ -266,7 +261,7 @@ describe('Scatter basic loading', function() {
     
     it('should discover roots under symlinked dirs', function(done) {
       var scatter = new Scatter();
-      var link = TEST_DIR + "/2rootsAutodiscoverLink/base2";
+      var link = TEST_DIR + "/nodeModulesLink/base2";
       try {
         rimraf.sync(link);
         //if it still exists, it means it
@@ -274,19 +269,9 @@ describe('Scatter basic loading', function() {
         console.log(err);
         //nothing here, this workaround is just for problem with invalid symlinks
       }
-      fs.symlinkSync(TEST_DIR + "/2rootsAutodiscover/base2", link);
+      fs.symlinkSync(TEST_DIR + "/nodeModules/base2", link);
       
-      scatter.setNodeModulesDir(TEST_DIR + '/2rootsAutodiscoverLink');
-
-      scatter.load('Module1').then(function(mod) {
-        expect(mod).to.have.deep.property('dep.prop', 'mod2');
-        done();
-      }).otherwise(done);
-    });
-
-    it('should redefine new roots in package.json', function(done) {
-      var scatter = new Scatter();
-      scatter.addRoots(TEST_DIR + '/packageMultiRoots');
+      scatter.setNodeModulesDir(TEST_DIR + '/nodeModulesLink');
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');

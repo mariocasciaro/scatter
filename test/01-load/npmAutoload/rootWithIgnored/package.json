@@ -1,8 +1,0 @@
-{
-  "scattered": {
-    "root": "src",
-    "ignore": [
-      "ignored"
-    ]
-  }
-}

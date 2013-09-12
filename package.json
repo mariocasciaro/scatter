@@ -4,6 +4,7 @@
   },
   "name": "scatter",
   "description": "Dependency Injection container for Node.js.",
+  "homepage": "https://github.com/mariocasciaro/scatter",
   "version": "0.3.6",
   "repository": {
     "type": "git",

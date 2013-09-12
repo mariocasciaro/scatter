@@ -1,0 +1,6 @@
+{
+  "name": "test",
+  "subcomponents": [
+      "base1", "base2"
+  ]
+}

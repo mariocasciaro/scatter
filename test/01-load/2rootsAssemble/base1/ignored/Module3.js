@@ -6,4 +6,4 @@ module.exports = function() {
   };
 };
 
-require('../../../inspector').b1Module4 = true;
+require('../../inspector').b1Module4 = true;

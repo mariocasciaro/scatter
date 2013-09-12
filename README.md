@@ -20,8 +20,8 @@ Every module created for Scatter can be used even without the Scatter DI contain
 
 ## Features
 
-- Scatter your project across different directories (e.g. core + plugins)
-- Support for namespaces (by default it follows the directory structure, like Java packages)
+- Scatter your project across different directories (components)
+- Support for namespaces (by default, module name follow the directory structure, like Java packages)
 - Automatic discovery and registration of modules
 - Module instantiation through factories, constructors or plain objects
 - Instantiate and initialize modules asynchronously using promises
@@ -32,7 +32,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 
 Define the module:
 
-`/core/hello.js`
+`/core/hello.js`:
 ```javascript
 module.exports = {
     sayHello: function() {
@@ -41,32 +41,42 @@ module.exports = {
 }
 ```
 
-Initialize the Scatter container and define its roots:
+Add the component descriptor:
+
+`/core/scatter.json`
+```javascript
+{
+    "name": "helloComponent"
+}
+```
+
+
+Initialize the Scatter container and register the new component directory:
 
 `/app.js`
 ```javascript
 var scatter = new Scatter();
-scatter.addRoots([
+scatter.registerComponent([
   __dirname + '/core'
 ]);
 
-//Load a module
+//Load and use the module
 scatter.load('hello').then(function(mod) {
     mod.sayHello();
 });
 
 ```
 
-(The code above is just for demonstration, usually you will never need to manually `load` a module, modules are normally wired together using [dependency injection](#dependency-injection) )
+(Usually you will never need to manually `load` a module, modules are normally wired together using [dependency injection](#dependency-injection) , this is just a demonstration)
 
 
 ## Module resolver
 
-In Scatter, **you don't need to manually register each module** with the DI container (although you can), modules are automatically resolved from the root directories specified during the container creation.
+In Scatter, **you don't need to manually register each module** with the DI container (although you can), modules are automatically resolved from the component directories specified during the container creation.
 
 __Module Naming__
 
-Each module is named after it's relative path from the root directory + the name of the file (without the `.js` extension. For example if we add a root:
+Each module is named after it's relative path from its component directory + the name of the file (without the `.js` extension). For example if we add a component from the directory:
 
 `/project/lib/`
 
@@ -78,48 +88,45 @@ The module will be available in the DI container with the name:
 
 `foo/bar`
 
-__Loading Priority__
+__Components and subcomponents__
 
-The order you use to add new roots to Scatter is important, as it will affect the priority of the module loading. **Modules in roots defined first will override modules with the same name in roots defined for last**. 
+A **Component** in Scatter is container for a set of modules. To define a component directory it is necessary to create a `scatter.json` file in the component directory itself. The json file must contain at least a `name` property, for example:
 
-Suppose you define 2 roots, in this order:
-
-1. `/project/plugins/pluginA`
-1. `/project/core`
-
-Now suppose you define 2 modules:
-
-* `/project/plugins/pluginA/foo.js`
-* `/project/core/foo.js`
-
-Now, since you defined the root `/project/plugins/pluginA` first, then loading the dependency `foo` will load the module `/project/plugins/pluginA/foo.js`.
-
-__Delegate roots definition to components__
-
-Sometimes to simplify the creation and distribution of third party components, it is useful to have the possibility to bundle multiple roots into the same component. This is particularly useful if you want to distribute a Scatter component as npm module.
-
-To delegate the definition of the roots to the components, Scatter supports an **autodiscovery** mode.
-
+`mycomponentdir/scatter.json`:
 ```javascript
-scatter.discoverRoots(basePaths);
+{
+    "name": "<component name>"
+}
+```
+If `scatter.json` is not found, the directory will not be added as component to the Scatter DI container.
+
+A component might define multiple subcomponents by specifying the `subcomponents` property (containing relative paths to subcomponents directories), for example:
+
+`mycomponentdir/scatter.json`:
+```javascript
+{
+    "name": "<component name>",
+    "subcomponents": [
+        "subDir1", "subDir2"
+    ]
+}
 ```
 
-By invoking the function above, Scatter will search recursively the specified directories for a `package.json` file. If such a file is found and it contains a property named `scatter`, the parent directory of the file will be added as root. Alternatively to specify a different root, you can define a `scatter.roots` property in the `package.json` specifying explicitly the roots to add.
+*Note*: Each Subcomponent dir must define its own `scatter.json` file. When specifying subcomponents the "parent" component directory is **not** registered in the DI container, only subcomponents will be.
 
-More info on that on the API docs [scatter.discoverRoots](#scatter-discoverroots)
+__Importing modules from the `node_modules` directory__
 
-For the specific case were you want to let Scatter discover roots in a list of npm modules, use the method [scatter.setNodeModulesDir](#scatter-setnodemodulesdir). This will also allow you to require standard npm modules from the DI container with the syntax `npm!<module name>`
+You can automatically register all the Scatter components in the `node_modules` directory by using the method [scatter.setNodeModulesDir](#scatter-setnodemodulesdir). This will also allow you to require standard npm modules from the DI container with the syntax `npm!<module name>`
 
 
 ## Dependency Injection
 
 Dependency injection is achieved by defining a `__scatter` descriptor in your module. With it you can control how the module is instantiated, but more importantly, how it's wired with other modules.
 
-The most intuitive (but less powerful) type of dependency injection in Scatter is achieved using **factories**.
+The most intuitive type of dependency injection in Scatter is achieved by  using **factories**.
 
 
 ```javascript
-
 module.exports = function(person) {
     return {
         sayHello: function() {
@@ -150,7 +157,7 @@ module.exports.__scatter = {
 
 ```
 
-You can even inject **properties** directly into the module instance, with modules defined as object literals, factories or constructors (the example below uses an object literal): 
+You can even inject **properties** directly into the module instance (injected after the module is instantiated)
 
 ```javascript
 var self = module.exports = {
@@ -161,7 +168,7 @@ var self = module.exports = {
 module.exports.__scatter = {
     properties: {
         person: 'models/person'
-    } 
+    }
 };
 ```
 
@@ -173,22 +180,22 @@ A module in Scatter has 3 states:
 2. *Instantiated* - The module is instantiated (e.g. the factory or constructor is invoked). At this point the module instance exists but it's not fully usable yet, its dependencies are injected but they might not yet be initialized.
 3. *Initialized* - The module is initialized, the `initialize` method was already invoked and all the dependencies are initialized as well.
 
-To consistently manage **loops** and **deadlocks** between module dependencies it is important to note that: 
+To consistently manage **loops** and **deadlocks** between module dependencies it is important to note that:
 
-* During the *instantiation* phase (factory or constructor) and the injection of dependencies as `properties`, all the dependencies injected are in the state *instantiated*, so NOT yet ready to be used (but ready to be assgned, for example).
-* During the invocation of the `initialize` function, the invocation of services, and the `load` methods, all the dependencies injected are guaranteed to be in state *initialized*.
+* During the *instantiation* phase (factory or constructor) and the injection of dependencies as `properties`, all the dependencies injected are in the state *instantiated*, so NOT yet ready to be used (but ready to be assigned, for example).
+* During the invocation of the `initialize` function, the invocation of services, and the `load` methods, all the dependencies injected are guaranteed to be in state *initialized* and ready to be used.
 
 
 __Example__
 
 ```javascript
 module.exports = function(foo) {
-    //foo here is instantiated but NOT initialized
+    //`foo` here is instantiated but NOT initialized
 }
 module.exports.__scatter = {
     args: ['foo'],
     initialize: [['bar'], function(bar) {
-        //bar is guaranteed to be initialized
+        //`bar` is guaranteed to be initialized
     }]
 }
 ```
@@ -198,9 +205,9 @@ module.exports.__scatter = {
 
 One of the most powerful features of Scatter is the services framework. You can use it to implement extension points, hooks or emit events.
 
-To define a service, create a function in your module then declare it in your `__scatter` descriptor, using the `provides` property. 
+To define a service, create a function in your module then declare it in your `__scatter` descriptor, using the `provides` property.
 
-To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`.
+To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`. Alternatively you can specify the mode ddirectly into the dependency: `svc|sequence!<namespace>/<service name>`
 
 Here is an example of how you can use it to register some routes in an `express` application.
 
@@ -237,7 +244,7 @@ self.__scatter = {
 
 Now somewhere else in your project you can register all your routes at once using the `register` service:
 
-`/core/expressApp.js`:
+`/components/core/expressApp.js`:
 ```javascript
 ...
 var express = require('express');
@@ -247,13 +254,13 @@ module.exports = function(registerRoutes) {
         initializeApp: function() {
             ...
 
-            return registerRoutes.sequence(self.express);
+            return registerRoutes(self.express);
         }
     }
     return self;
 };
 module.exports.__scatter = {
-    args: ['svc!routes/register'],
+    args: ['svc|sequence!routes/register'],
     provides: ['initializeApp']
 }
 ```
@@ -262,10 +269,7 @@ Then the app entry point:
 `/app.js`:
 ```javascript
 var scatter = new Scatter();
-scatter.addRoots([
-  __dirname + '/components/*',
-  __dirname + '/core'
-]);
+scatter.registerComponent(__dirname + '/components/*');
 
 scatter.load('svc!initializeApp').sequence().then(function() {
     console.log('App initialized');
@@ -296,8 +300,8 @@ module.exports.__scatter = {
 
 1. [Scatter](#scatter-1)
     * [constructor](#scatter-constructor)
-    * [scatter.addRoots](#scatter-addroots)
-    * [scatter.discoverRoots](#scatter-discoverroots)
+    * [scatter.registerComponents](#scatter-registercomponents)
+    * [scatter.registerComponent](#scatter-registercomponent)
     * [scatter.setNodeModulesDir](#scatter-setnodemodulesdir)
     * [scatter.load](#scatter-load)
     * [scatter.registerModule](#scatter-registermodule)
@@ -346,67 +350,35 @@ var scatter = new Scatter({
 });
 ```
 
-<a name="scatter-addroots" />
-### scatter.addRoots(roots)
+<a name="scatter-registercomponents" />
+### scatter.registerComponents(componentsDirs)
 
-Add one or more roots to the Scatter object, so they will be used to search for modules by the DI container.
+Register one or more components with the Scatter container.
 
 __Arguments__
 
-* `roots` - A String (or Array of Strings) representing the root(s) to add. Supports glob syntax.
+* `componentsDirs` - A String (or Array of Strings) representing the component(s) directories to add. Supports glob syntax.
 
 __Example__
 
 ```javascript
 var scatter = new Scatter();
-scatter.addRoots([__dirname + '/components/*', __dirname + '/core']);
+scatter.registerComponents([__dirname + '/components/*', __dirname + '/core']);
 ```
 
-<a name="scatter-discoverroots" />
-### scatter.discoverRoots(basePath)
+<a name="scatter-registercomponent" />
+### scatter.registerComponent(componentDir)
 
-Walk recursively a directory to search for `package.json` describing Scatter roots. The `package.json` files must contain a `scatter` property:
-* If empty - the directory containing the `package.json` file will be added as module root.
-* if contains a `roots` property - the roots specified in the Array will be added as module roots.
-
-__Arguments__
-
-* `basePath` - String or Array of Strings, containing paths to use as starting point to discover module roots. Supports glob syntax.
-
-__Example__
-
-```sh
-components
-├── module1
-│   ├── lib
-│   └── package.json
-└── module2
-    └── src
-```
-
-```javascript
-var scatter = new Scatter();
-scatter.discoverRoots(__dirname + '/components');
-```
-
-`/components/module1/package.json`:
-```javascript
-{
-    "scatter": {}
-}
-```
-
-`components/module1` will be added as root, `components/module2` will NOT be added as it does not define a `package.json` with a `scatter` property.
+Alias of [scatter.registerComponents](#scatter-registercomponents)
 
 <a name="scatter-setnodemodulesdir" />
 ### scatter.setNodeModulesDir(nodeModulesDir[, disableAutodiscover])
 
-Tells Scatter where to fin the `node_modules` directory. This enabled the use of `npm!` dependencies, with with you can require normal npm modules from the DI container. Also it autodiscover Scatter roots inside the npm modules.
+Tells Scatter where to find the `node_modules` directory. This enable the use of `npm!` dependencies, to require normal npm modules from the DI container. Also it will register all the Scatter components found inside the npm modules.
 
 __Arguments__
 
 * `nodeModulesDir` - Path to the `node_modules` directory of the project
-* `disableAutodiscover` - If true Scatter will not autodiscover eventual components roots defined into the npm modules
 
 <a name="scatter-load" />
 ### scatter.load(name)
@@ -492,7 +464,7 @@ scatter.registerModuleInstance('bar/mod', instance, {});
 
 <a name="scatter-descriptor" />
 ## The __scatter descriptor
-
+TODO
 <a name="desc-args" />
 ### args
 
