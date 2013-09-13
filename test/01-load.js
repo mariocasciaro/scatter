@@ -146,8 +146,22 @@ describe('Scatter basic loading', function() {
   });
   
   
-  describe("Multiple roots", function() {
+  describe("Multiple components", function() {
     it('should form a unique namespace', function(done) {
+      var scatter = new Scatter();
+      scatter.registerComponents( [
+        TEST_DIR + '/2roots/base1',
+        TEST_DIR + '/2roots/base2'
+      ]);
+
+      scatter.load('Module2').then(function(mod) {
+        expect(mod).to.have.deep.property('prop', 'mod2');
+        done();
+      }).otherwise(done);
+    });
+
+
+    it('should override modules based on scatter.json settings', function(done) {
       var scatter = new Scatter();
       scatter.registerComponents( [
         TEST_DIR + '/2roots/base1',
@@ -156,6 +170,21 @@ describe('Scatter basic loading', function() {
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
+        done();
+      }).otherwise(done);
+    });
+    
+    
+    it('should extend modules', function(done) {
+      var scatter = new Scatter();
+      scatter.registerComponents( [
+        TEST_DIR + '/extension/*'
+      ]);
+
+      scatter.load('Module1').then(function(mod) {
+        expect(mod).to.have.deep.property('prop', 'comp1');
+        expect(mod).to.have.deep.property('parent.prop', 'comp3');
+        expect(mod).to.have.deep.property('parent.parent.prop', 'comp2');
         done();
       }).otherwise(done);
     });

@@ -6,6 +6,8 @@
 
 Scatter allows you to split your project in components located in **separated root directories**, and then uses **Dependency Injection** to make your code whole again.
 
+Applications created with Scatter are **extensible out-of-the box**. Since every dependecy is "virtual", you can override and extend every module you like. On top of the by using [Services](#services) you can provide explicit extension point to your application.
+
 Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__scatter` to extract the information needed to initialize the module and inject dependencies.
 
 
@@ -15,7 +17,8 @@ Every module created for Scatter can be used even without the Scatter DI contain
 3. [Dependency Injection](#dependency-injection)
 4. [Module lifecycle](#module-lifecycle)
 5. [Services](#services)
-6. [API Docs](#api)
+6. [Extend and Override Modules](#extend)
+7. [API Docs](#api)
 
 
 ## Features
@@ -207,7 +210,7 @@ One of the most powerful features of Scatter is the services framework. You can 
 
 To define a service, create a function in your module then declare it in your `__scatter` descriptor, using the `provides` property.
 
-To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`. Alternatively you can specify the mode ddirectly into the dependency: `svc|sequence!<namespace>/<service name>`
+To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`. Alternatively you can specify the mode directly into the dependency: `svc|sequence!<namespace>/<service name>`
 
 Here is an example of how you can use it to register some routes in an `express` application.
 
@@ -271,7 +274,9 @@ Then the app entry point:
 var scatter = new Scatter();
 scatter.registerComponent(__dirname + '/components/*');
 
-scatter.load('svc!initializeApp').sequence().then(function() {
+scatter.load('svc|sequence!initializeApp').then(function(initializeApp) {
+    return initializeApp();
+}).then(function() {
     console.log('App initialized');
 });
 ```
@@ -295,6 +300,63 @@ module.exports.__scatter = {
 }
 ```
 
+<a name="extend" />
+## Extend and Override Modules
+
+The real power of Scatter resides in the fact that every module can be overridden or extended by another component. This way it is possible to change the behaviour of any module in any component! 
+
+To declare that a component is going to override the modules of another one it is necessary to add the property `overrides` into the `scatter.json` descriptor, for example:
+
+`/components/EnhancedUser/scatter.json`
+```javascript
+{
+    "name": "EnhancedUser",
+    "overrides": ["BasicUser"]
+}
+```
+
+Now as example look how it's possible to extend an hypothetical `User` module with some extra features. 
+
+`/components/BasicUser/User.js`
+```javascript
+var self = module.exports = {
+    username: "Mario",
+    hello: function() {
+        console.log("Hello " + self.username);
+    }
+}
+```
+
+`/components/EnhancedUser/User.js`
+```javascript
+module.exports = function(User) {
+    User.username = "Luigi";
+    return User;
+}
+module.exports.__scatter = {
+    args: ['User']
+}
+```
+
+With the module above with are modifying the module `User` by changing its username to `Luigi`. This is just a basic change but thanks to the power of javascript we can transform the parent module in many different ways!
+
+
+Notice the dependency `User` that is injected into the factory, since we specified that the component `EnhancedUser` overrides the component `BasicUser`, Scatter knows how to resolve the `User` module from the dependency tree.
+
+Now we can initialize Scatter and load the `User` module:
+
+`/app.js`:
+```javascript
+var scatter = new Scatter();
+scatter.registerComponent(__dirname + '/components/*');
+
+scatter.load('User').then(function(user) {
+    user.hello();
+});
+```
+
+What the code above will print?
+
 
 # API
 
@@ -312,12 +374,13 @@ module.exports.__scatter = {
     * [provides](#desc-provides)
     * [initialize](#desc-initialize)
     * [type](#desc-type)
+    * [overrideProvides](#desc-overrideProvides)
 3. [Dependency types](#injected-dependencies)
     * [Modules](#modules)
     * [Services](#services)
     * [Scatter container](#scatter-container)
     * [Npm modules](#npm-modules)
-4. [package.json extensions](#packagejson-extensions)
+4. [Component descriptor(scatter.json)](#component_descriptor)
 
 
 ## Scatter
@@ -383,15 +446,15 @@ __Arguments__
 <a name="scatter-load" />
 ### scatter.load(name)
 
-Manually load a dependency from the DI container.
+Manually load a dependency (or set of dependencies) from the DI container.
 
 __Arguments__
 
-* `name` - The dependency name
+* `name` - [String] The dependency name, or [Array] of dependencies.
 
 __Returns__
 
-A promise for the loaded module.
+A promise for the loaded module or for an [Array] of the loaded modules.
 
 __Example__
 
@@ -454,7 +517,7 @@ __Example__
 ```javascript
 
 var instance = {
-    hello: function() {
+hello: function() {
         console.log('hello everybody!');
     }
 }
@@ -479,4 +542,7 @@ TODO
 
 <a name="desc-type" />
 ### type
+
+<a name="desc-overrideprovides" />
+### overrideProvides
 
