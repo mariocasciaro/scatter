@@ -1,4 +1,4 @@
-[![NPM](https://nodei.co/npm/scatter.png)](https://nodei.co/npm/scatter/)
+[![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
 
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
 
