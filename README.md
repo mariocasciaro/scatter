@@ -4,9 +4,9 @@
 
 # Scatter
 
-Scatter allows you to split your project in components located in **separated root directories**, and then uses **Dependency Injection** to make your code whole again.
+Scatter allows you to split your project in **components**, and then uses **Dependency Injection** to make your code whole again.
 
-Applications created with Scatter are **extensible out-of-the box**. Since every dependecy is "virtual", you can override and extend every module. On top of that by using [Services](#services) you can provide explicit extension points to your application.
+Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. On top of that by using [Services](#services) you can provide explicit extension points to your application.
 
 Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__scatter` to extract the information needed to initialize the module and inject dependencies.
 
