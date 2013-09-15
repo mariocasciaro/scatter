@@ -22,6 +22,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 5. [Services](#services)
 6. [Extend and Override Modules](#extend)
 7. [API Docs](#api)
+8. [Contributors](#contributors)
 
 
 ## Features
@@ -549,3 +550,7 @@ TODO
 <a name="desc-overrideprovides" />
 ### overrideProvides
 
+## Contributors
+
+* Mario Casciaro/Github @mariocasciaro/Twitter [@mariocasciaro](https://twitter.com/mariocasciaro)
+* <Your name here>
