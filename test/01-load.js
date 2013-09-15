@@ -13,7 +13,7 @@ describe('Scatter basic loading', function() {
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.registerComponents(TEST_DIR + '/basic');
+      scatter.registerParticles(TEST_DIR + '/basic');
     });
   
     it('should load and return a module', function(done) {
@@ -52,7 +52,7 @@ describe('Scatter basic loading', function() {
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.registerComponents(TEST_DIR + '/types');
+      scatter.registerParticles(TEST_DIR + '/types');
     });
 
     it('should not explode with a NULL module', function(done) {
@@ -95,7 +95,7 @@ describe('Scatter basic loading', function() {
       //    console.log(message);
       //  }
       });
-      scatter.registerComponents(TEST_DIR + '/di');
+      scatter.registerParticles(TEST_DIR + '/di');
     });
 
 
@@ -149,7 +149,7 @@ describe('Scatter basic loading', function() {
   describe("Multiple components", function() {
     it('should form a unique namespace', function(done) {
       var scatter = new Scatter();
-      scatter.registerComponents( [
+      scatter.registerParticles( [
         TEST_DIR + '/2roots/base1',
         TEST_DIR + '/2roots/base2'
       ]);
@@ -161,9 +161,9 @@ describe('Scatter basic loading', function() {
     });
 
 
-    it('should override modules based on scatter.json settings', function(done) {
+    it('should override modules based on particle.json settings', function(done) {
       var scatter = new Scatter();
-      scatter.registerComponents( [
+      scatter.registerParticles( [
         TEST_DIR + '/2roots/base1',
         TEST_DIR + '/2roots/base2'
       ]);
@@ -177,7 +177,7 @@ describe('Scatter basic loading', function() {
     
     it('should extend modules', function(done) {
       var scatter = new Scatter();
-      scatter.registerComponents( [
+      scatter.registerParticles( [
         TEST_DIR + '/extension/*'
       ]);
 
@@ -189,9 +189,9 @@ describe('Scatter basic loading', function() {
       }).otherwise(done);
     });
 
-    it('should include subcomponents from scatter.json', function(done) {
+    it('should include subparticles from particle.json', function(done) {
       var scatter = new Scatter();
-      scatter.registerComponents(TEST_DIR + '/subcomponents');
+      scatter.registerParticles(TEST_DIR + '/subparticles');
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
@@ -201,7 +201,7 @@ describe('Scatter basic loading', function() {
 
     it('should expand globs', function(done) {
       var scatter = new Scatter();
-      scatter.registerComponents(TEST_DIR + '/2roots/base*');
+      scatter.registerParticles(TEST_DIR + '/2roots/base*');
 
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
@@ -215,7 +215,7 @@ describe('Scatter basic loading', function() {
     var scatter;
     before(function(){
       scatter = new Scatter();
-      scatter.registerComponents([
+      scatter.registerParticles([
         TEST_DIR + '/2rootsAssemble/base1',
         TEST_DIR + '/2rootsAssemble/base2'
       ]);
@@ -250,7 +250,7 @@ describe('Scatter basic loading', function() {
   describe("scoped assemble", function() {
     it('should load only matching modules in advance', function() {
       var scatter = new Scatter();
-      scatter.registerComponents([
+      scatter.registerParticles([
         TEST_DIR + '/2rootsScopedAssemble/base1',
         TEST_DIR + '/2rootsScopedAssemble/base2'
       ]);

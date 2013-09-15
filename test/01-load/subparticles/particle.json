@@ -1,6 +1,6 @@
 {
   "name": "test",
-  "subcomponents": [
+  "subparticles": [
       "base1", "base2"
   ]
 }

@@ -8,7 +8,7 @@ describe('Scatter Services',function(){
     var scatter;
     beforeEach(function() {
       scatter = new Scatter();
-      scatter.registerComponents(__dirname + '/02-services/scope');
+      scatter.registerParticles(__dirname + '/02-services/scope');
     });
 
     it('should load a service', function(done) {
@@ -57,7 +57,7 @@ describe('Scatter Services',function(){
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.registerComponents(__dirname + '/02-services/orderAndModes');
+      scatter.registerParticles(__dirname + '/02-services/orderAndModes');
     });
 
     it('should maintain order', function(done) {
@@ -125,7 +125,7 @@ describe('Scatter Services',function(){
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.registerComponents(__dirname + '/02-services/injectedService');
+      scatter.registerParticles(__dirname + '/02-services/injectedService');
     });
 
     it('should be given as dependency', function(done) {
@@ -144,7 +144,7 @@ describe('Scatter Services',function(){
     var scatter;
     before(function() {
       scatter = new Scatter();
-      scatter.registerComponents(__dirname + '/02-services/2phaseLoading');
+      scatter.registerParticles(__dirname + '/02-services/2phaseLoading');
     });
 
     it('should load and initialize all dependencies', function(done) {

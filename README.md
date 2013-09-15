@@ -4,7 +4,7 @@
 
 # Scatter
 
-Scatter allows you to split your project in **components**, and then uses **Dependency Injection** to make your code whole again.
+Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** to make your code whole again.
 
 Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. On top of that by using [Services](#services) you can provide explicit extension points to your application.
 
@@ -27,7 +27,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 
 ## Features
 
-- Scatter your project across different directories (components)
+- Scatter your project across different directories (particles)
 - Support for namespaces (by default, module name follow the directory structure, like Java packages)
 - Automatic discovery and registration of modules
 - Module instantiation through factories, constructors or plain objects
@@ -48,9 +48,9 @@ module.exports = {
 }
 ```
 
-Add the component descriptor:
+Add the particle descriptor:
 
-`/core/component.json`
+`/core/particle.json`
 ```javascript
 {
     "name": "helloComponent"
@@ -58,12 +58,12 @@ Add the component descriptor:
 ```
 
 
-Initialize the Scatter container and register the new component directory:
+Initialize the Scatter container and register the new particle directory:
 
 `/app.js`
 ```javascript
 var scatter = new Scatter();
-scatter.registerComponent([
+scatter.registerParticle([
   __dirname + '/core'
 ]);
 
@@ -79,11 +79,11 @@ scatter.load('hello').then(function(mod) {
 
 ## Module resolver
 
-In Scatter, **you don't need to manually register each module** with the DI container (although you can), modules are automatically resolved from the component directories specified during the container creation.
+In Scatter, **you don't need to manually register each module** with the DI container (although you can), modules are automatically resolved from the particle directories specified during the container creation.
 
 __Module Naming__
 
-Each module is named after it's relative path from its component directory + the name of the file (without the `.js` extension). For example if we add a component from the directory:
+Each module is named after it's relative path from its particle directory + the name of the file (without the `.js` extension). For example if we add a particle from the directory:
 
 `/project/lib/`
 
@@ -95,35 +95,35 @@ The module will be available in the DI container with the name:
 
 `foo/bar`
 
-__Components and subcomponents__
+__Particles and subparticles__
 
-A **Component** in Scatter is container for a set of modules. To define a component directory it is necessary to create a `component.json` file in the component directory itself. The json file must contain at least a `name` property, for example:
+A **Particle** in Scatter is a container for a set of modules. To define a particle directory it is necessary to create a `particle.json` file in the particle directory itself. The json file must contain at least a `name` property, for example:
 
-`mycomponentdir/component.json`:
+`myparticledir/particle.json`:
 ```javascript
 {
-    "name": "<component name>"
+    "name": "<particle name>"
 }
 ```
-If `component.json` is not found, the directory will not be added as component to the Scatter DI container.
+If `particle.json` is not found, the directory will not be added as particle to the Scatter DI container.
 
-A component might define multiple subcomponents by specifying the `subcomponents` property (containing relative paths to subcomponents directories), for example:
+A particle might define multiple subparticles by specifying the `subparticles` property (containing relative paths to subparticles directories), for example:
 
-`mycomponentdir/component.json`:
+`myparticledir/particle.json`:
 ```javascript
 {
-    "name": "<component name>",
-    "subcomponents": [
+    "name": "<particle name>",
+    "subparticles": [
         "subDir1", "subDir2"
     ]
 }
 ```
 
-*Note*: Each Subcomponent dir must define its own `component.json` file. When specifying subcomponents the "parent" component directory is **not** registered in the DI container, only subcomponents will be.
+*Note*: Each Subparticle dir must define its own `particle.json` file. When specifying subparticles the "parent" particle directory is **not** registered in the DI container, only subparticles will be.
 
 __Importing modules from the `node_modules` directory__
 
-You can automatically register all the Scatter components in the `node_modules` directory by using the method [scatter.setNodeModulesDir](#scatter-setnodemodulesdir). This will also allow you to require standard npm modules from the DI container with the syntax `npm!<module name>`
+You can automatically register all the Scatter particles in the `node_modules` directory by using the method [scatter.setNodeModulesDir](#scatter-setnodemodulesdir). This will also allow you to require standard npm modules from the DI container with the syntax `npm!<module name>`
 
 
 ## Dependency Injection
@@ -276,7 +276,7 @@ Then the app entry point:
 `/app.js`:
 ```javascript
 var scatter = new Scatter();
-scatter.registerComponent(__dirname + '/components/*');
+scatter.registerParticle(__dirname + '/components/*');
 
 scatter.load('svc|sequence!initializeApp').then(function(initializeApp) {
     return initializeApp();
@@ -307,11 +307,11 @@ module.exports.__module = {
 <a name="extend" />
 ## Extend and Override Modules
 
-The real power of Scatter resides in the fact that every module can be overridden or extended by another component. This way it is possible to change the behaviour of any module in any component! 
+The real power of Scatter resides in the fact that every module can be overridden or extended by another particle. This way it is possible to change the behaviour of any module in any particle!
 
-To declare that a component is going to override the modules of another one it is necessary to add the property `overrides` into the `component.json` descriptor, for example:
+To declare that a particle is going to override the modules of another one it is necessary to add the property `overrides` into the `particle.json` descriptor, for example:
 
-`/components/EnhancedUser/component.json`
+`/components/EnhancedUser/particle.json`
 ```javascript
 {
     "name": "EnhancedUser",
@@ -345,14 +345,14 @@ module.exports.__module = {
 With the module above with are modifying the module `User` by changing its username to `Luigi`. This is just a basic change but thanks to the power of javascript we can transform the parent module in many different ways!
 
 
-Notice the dependency `User` that is injected into the factory, since we specified that the component `EnhancedUser` overrides the component `BasicUser`, Scatter knows how to resolve the `User` module from the dependency tree.
+Notice the dependency `User` that is injected into the factory, since we specified that the particle `EnhancedUser` overrides the particle `BasicUser`, Scatter knows how to resolve the `User` module from the dependency tree.
 
 Now we can initialize Scatter and load the `User` module:
 
 `/app.js`:
 ```javascript
 var scatter = new Scatter();
-scatter.registerComponent(__dirname + '/components/*');
+scatter.registerParticle(__dirname + '/components/*');
 
 scatter.load('User').then(function(user) {
     user.hello();
@@ -366,8 +366,8 @@ What the code above will print?
 
 1. [Scatter](#scatter-1)
     * [constructor](#scatter-constructor)
-    * [scatter.registerComponents](#scatter-registercomponents)
-    * [scatter.registerComponent](#scatter-registercomponent)
+    * [scatter.registerParticles](#scatter-registerparticles)
+    * [scatter.registerParticle](#scatter-registerparticle)
     * [scatter.setNodeModulesDir](#scatter-setnodemodulesdir)
     * [scatter.load](#scatter-load)
     * [scatter.registerModule](#scatter-registermodule)
@@ -384,7 +384,7 @@ What the code above will print?
     * [Services](#services)
     * [Scatter container](#scatter-container)
     * [Npm modules](#npm-modules)
-4. [Component descriptor(component.json)](#component_descriptor)
+4. [Particle descriptor(particle.json)](#particle_descriptor)
 
 
 ## Scatter
@@ -417,31 +417,31 @@ var scatter = new Scatter({
 });
 ```
 
-<a name="scatter-registercomponents" />
-### scatter.registerComponents(componentsDirs)
+<a name="scatter-registerparticles" />
+### scatter.registerParticles(particlesDirs)
 
-Register one or more components with the Scatter container.
+Register one or more particles with the Scatter container.
 
 __Arguments__
 
-* `componentsDirs` - A String (or Array of Strings) representing the component(s) directories to add. Supports glob syntax.
+* `particlesDirs` - A String (or Array of Strings) representing the particle(s) directories to add. Supports glob syntax.
 
 __Example__
 
 ```javascript
 var scatter = new Scatter();
-scatter.registerComponents([__dirname + '/components/*', __dirname + '/core']);
+scatter.registerParticles([__dirname + '/components/*', __dirname + '/core']);
 ```
 
-<a name="scatter-registercomponent" />
-### scatter.registerComponent(componentDir)
+<a name="scatter-registerparticle" />
+### scatter.registerParticle(particleDir)
 
-Alias of [scatter.registerComponents](#scatter-registercomponents)
+Alias of [scatter.registerParticles](#scatter-registerparticles)
 
 <a name="scatter-setnodemodulesdir" />
 ### scatter.setNodeModulesDir(nodeModulesDir[, disableAutodiscover])
 
-Tells Scatter where to find the `node_modules` directory. This enable the use of `npm!` dependencies, to require normal npm modules from the DI container. Also it will register all the Scatter components found inside the npm modules.
+Tells Scatter where to find the `node_modules` directory. This enable the use of `npm!` dependencies, to require normal npm modules from the DI container. Also it will register all the Scatter particles found inside the npm modules.
 
 __Arguments__
 
