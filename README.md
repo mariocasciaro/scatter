@@ -49,7 +49,7 @@ module.exports = {
 
 Add the component descriptor:
 
-`/core/scatter.json`
+`/core/component.json`
 ```javascript
 {
     "name": "helloComponent"
@@ -96,19 +96,19 @@ The module will be available in the DI container with the name:
 
 __Components and subcomponents__
 
-A **Component** in Scatter is container for a set of modules. To define a component directory it is necessary to create a `scatter.json` file in the component directory itself. The json file must contain at least a `name` property, for example:
+A **Component** in Scatter is container for a set of modules. To define a component directory it is necessary to create a `component.json` file in the component directory itself. The json file must contain at least a `name` property, for example:
 
-`mycomponentdir/scatter.json`:
+`mycomponentdir/component.json`:
 ```javascript
 {
     "name": "<component name>"
 }
 ```
-If `scatter.json` is not found, the directory will not be added as component to the Scatter DI container.
+If `component.json` is not found, the directory will not be added as component to the Scatter DI container.
 
 A component might define multiple subcomponents by specifying the `subcomponents` property (containing relative paths to subcomponents directories), for example:
 
-`mycomponentdir/scatter.json`:
+`mycomponentdir/component.json`:
 ```javascript
 {
     "name": "<component name>",
@@ -118,7 +118,7 @@ A component might define multiple subcomponents by specifying the `subcomponents
 }
 ```
 
-*Note*: Each Subcomponent dir must define its own `scatter.json` file. When specifying subcomponents the "parent" component directory is **not** registered in the DI container, only subcomponents will be.
+*Note*: Each Subcomponent dir must define its own `component.json` file. When specifying subcomponents the "parent" component directory is **not** registered in the DI container, only subcomponents will be.
 
 __Importing modules from the `node_modules` directory__
 
@@ -308,9 +308,9 @@ module.exports.__module = {
 
 The real power of Scatter resides in the fact that every module can be overridden or extended by another component. This way it is possible to change the behaviour of any module in any component! 
 
-To declare that a component is going to override the modules of another one it is necessary to add the property `overrides` into the `scatter.json` descriptor, for example:
+To declare that a component is going to override the modules of another one it is necessary to add the property `overrides` into the `component.json` descriptor, for example:
 
-`/components/EnhancedUser/scatter.json`
+`/components/EnhancedUser/component.json`
 ```javascript
 {
     "name": "EnhancedUser",
@@ -383,7 +383,7 @@ What the code above will print?
     * [Services](#services)
     * [Scatter container](#scatter-container)
     * [Npm modules](#npm-modules)
-4. [Component descriptor(scatter.json)](#component_descriptor)
+4. [Component descriptor(component.json)](#component_descriptor)
 
 
 ## Scatter
