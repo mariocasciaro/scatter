@@ -9,7 +9,7 @@ module.exports = function(Module2, Module3) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true,
   args: ['Module2', 'Module3']
 };

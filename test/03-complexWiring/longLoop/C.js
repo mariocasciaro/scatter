@@ -3,7 +3,7 @@ module.exports = function() {
 
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   args: ['E'],
   properties: {D: 'D'}
 };

@@ -8,7 +8,7 @@ module.exports = function(ctx) {
     }
   }
 };
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true,
   args: ['ctx!'],
   provides: ['a_dyn_service']

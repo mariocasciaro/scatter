@@ -7,7 +7,7 @@ module.exports = function(depObj) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   args: ['Module2']
 };
 

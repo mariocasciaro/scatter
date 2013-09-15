@@ -4,7 +4,7 @@ var self = module.exports = {
     return self.aDep.name;
   }
 };
-module.exports.__scatter = {
+module.exports.__module = {
   properties: {
     aDep: 'Module3'
   }

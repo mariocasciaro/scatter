@@ -7,6 +7,6 @@ module.exports = function(parent) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   args: ['Module1']
 };

@@ -8,7 +8,7 @@ module.exports = function() {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true,
   provides: 'svc'
 };

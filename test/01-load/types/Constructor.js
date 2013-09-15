@@ -4,6 +4,6 @@ module.exports = function() {
   this.prop = "constructor";
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   type: "constructor"
 };

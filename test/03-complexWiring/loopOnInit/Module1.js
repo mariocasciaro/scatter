@@ -7,7 +7,7 @@ module.exports = {
   },
   initialized: true
 };
-module.exports.__scatter = {
+module.exports.__module = {
   initialize: [['Module2'], function(Module2) {
     this.initialized = true;
     this.otherInitialized = Module2.initialized;

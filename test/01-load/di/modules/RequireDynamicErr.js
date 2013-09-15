@@ -7,7 +7,7 @@ module.exports = function(dep) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   args: ['anamespace/DepDyn']
 };
 

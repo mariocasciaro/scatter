@@ -3,6 +3,6 @@ module.exports = function() {
   return {};
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true
 };

@@ -8,8 +8,11 @@ Scatter allows you to split your project in **components**, and then uses **Depe
 
 Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. On top of that by using [Services](#services) you can provide explicit extension points to your application.
 
-Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__scatter` to extract the information needed to initialize the module and inject dependencies.
+Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__module` to extract the information needed to initialize the module and inject dependencies.
 
+**Note**: The API is currently unstable, the module is not following the semantic versioning at the moment because of the frequency of breaking changes.
+
+## TOC
 
 1. [Features](#features)
 2. [Getting Started](#getting-started)
@@ -124,7 +127,7 @@ You can automatically register all the Scatter components in the `node_modules` 
 
 ## Dependency Injection
 
-Dependency injection is achieved by defining a `__scatter` descriptor in your module. With it you can control how the module is instantiated, but more importantly, how it's wired with other modules.
+Dependency injection is achieved by defining a `__module` descriptor in your module. With it you can control how the module is instantiated, but more importantly, how it's wired with other modules.
 
 The most intuitive type of dependency injection in Scatter is achieved by  using **factories**.
 
@@ -137,7 +140,7 @@ module.exports = function(person) {
         }
     };
 };
-module.exports.__scatter = {
+module.exports.__module = {
     args: ['models/person']
 };
 ```
@@ -154,7 +157,7 @@ Hello.prototype.sayHello: function() {
 }
 
 module.exports = Hello;
-module.exports.__scatter = {
+module.exports.__module = {
     args: ['models/person']
 };
 
@@ -168,7 +171,7 @@ var self = module.exports = {
         console.log("Hello " + self.person.name + "!");
     }
 };
-module.exports.__scatter = {
+module.exports.__module = {
     properties: {
         person: 'models/person'
     }
@@ -195,7 +198,7 @@ __Example__
 module.exports = function(foo) {
     //`foo` here is instantiated but NOT initialized
 }
-module.exports.__scatter = {
+module.exports.__module = {
     args: ['foo'],
     initialize: [['bar'], function(bar) {
         //`bar` is guaranteed to be initialized
@@ -208,7 +211,7 @@ module.exports.__scatter = {
 
 One of the most powerful features of Scatter is the services framework. You can use it to implement extension points, hooks or emit events.
 
-To define a service, create a function in your module then declare it in your `__scatter` descriptor, using the `provides` property.
+To define a service, create a function in your module then declare it in your `__module` descriptor, using the `provides` property.
 
 To use a service inject a dependency in the format `svc!<namespace>/<service name>`, then invoke the service using a specific mode:  `sequence()`, `any()`, `pipeline()`. Alternatively you can specify the mode directly into the dependency: `svc|sequence!<namespace>/<service name>`
 
@@ -224,7 +227,7 @@ var self = module.exports = {
         express.get('/', self.home);
     }
 };
-self.__scatter = {
+self.__module = {
     provides: 'register'
 }
 ```
@@ -240,7 +243,7 @@ var self = module.exports = {
         express.get('/person', self.view);
     }
 };
-self.__scatter = {
+self.__module = {
     provides: 'register'
 }
 ```
@@ -262,7 +265,7 @@ module.exports = function(registerRoutes) {
     }
     return self;
 };
-module.exports.__scatter = {
+module.exports.__module = {
     args: ['svc|sequence!routes/register'],
     provides: ['initializeApp']
 }
@@ -285,12 +288,12 @@ Notice how you can require a service exactly in the same way you require a modul
 
 Another cool thing, is that the three modules do not know of the existence of each other, they are totally **decoupled**.
 
-If you need a particular order of execution between your services, you can easily define it by specifying it in the `__scatter` descriptor, for example:
+If you need a particular order of execution between your services, you can easily define it by specifying it in the `__module` descriptor, for example:
 
 `/components/aPlugin/routes/person.js`:
 ```javascript
 ...
-module.exports.__scatter = {
+module.exports.__module = {
     ...
     provides: {
         register: {
@@ -333,7 +336,7 @@ module.exports = function(User) {
     User.username = "Luigi";
     return User;
 }
-module.exports.__scatter = {
+module.exports.__module = {
     args: ['User']
 }
 ```
@@ -368,7 +371,7 @@ What the code above will print?
     * [scatter.load](#scatter-load)
     * [scatter.registerModule](#scatter-registermodule)
     * [scatter.registerModuleInstance](#scatter-registermoduleinstance)
-2. [__scatter descriptor](#scatter-descriptor)
+2. [__module descriptor](#scatter-descriptor)
     * [args](#desc-args)
     * [properties](#desc-properties)
     * [provides](#desc-provides)
@@ -467,13 +470,13 @@ scatter.load('foo/bar').then(function(mod) {
 <a name="scatter-registermodule" />
 ### scatter.registerModule(name, rawModule [, descriptor])
 
-Register a raw module that is not yet instantiated nor initialized. Scatter will take care to instantiate and initialize it when needed, using the information in the `__scatter` descriptor.
+Register a raw module that is not yet instantiated nor initialized. Scatter will take care to instantiate and initialize it when needed, using the information in the `__module` descriptor.
 
 __Arguments__
 
 * `name` - Full name of the module (complete with namespace)
 * `rawModule` - The raw module object
-* `descriptor` - If provided it will be used in place of the `__scatter` property.
+* `descriptor` - If provided it will be used in place of the `__module` property.
 
 __Returns__
 
@@ -489,7 +492,7 @@ var mod = function(foo) {
         }
     };
 };
-mod.__scatter = {
+mod.__module = {
     args: ['foo']
 }
 
@@ -506,7 +509,7 @@ __Arguments__
 
 * `name` - The full name of the module
 * `instance` - The module instance
-* `descriptor` - The module descriptor, in place of the `__scatter` property that usually is part of the raw module, not the module instance. At this stage only the `provides` property of the descriptor is relevant.
+* `descriptor` - The module descriptor, in place of the `__module` property that usually is part of the raw module, not the module instance. At this stage only the `provides` property of the descriptor is relevant.
 
 __Returns__
 
@@ -526,7 +529,7 @@ scatter.registerModuleInstance('bar/mod', instance, {});
 ```
 
 <a name="scatter-descriptor" />
-## The __scatter descriptor
+## The __module descriptor
 TODO
 <a name="desc-args" />
 ### args

@@ -3,6 +3,6 @@ module.exports = function(C) {
 
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   args: ['C']
 };

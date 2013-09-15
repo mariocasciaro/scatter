@@ -7,7 +7,7 @@ module.exports = function(ctx, ctxData) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true,
   args: ['ctx!', 'ctx!data']
 };

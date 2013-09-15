@@ -6,7 +6,7 @@ module.exports = function(Module1) {
   };
 };
 
-module.exports.__scatter = {
+module.exports.__module = {
   isStateful: true,
   args: ["Module1"]
 };

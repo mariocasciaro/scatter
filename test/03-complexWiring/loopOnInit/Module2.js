@@ -12,7 +12,7 @@ module.exports = function() {
 
   return self;
 };
-module.exports.__scatter = {
+module.exports.__module = {
   initialize: [['Module1'], function(Module1) {
     this.otherInitialized = Module1.initialized;
     this.dep = Module1;

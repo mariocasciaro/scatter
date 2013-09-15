@@ -14,6 +14,6 @@ module.exports = {
     return delay(700000, "Module2");
   }
 };
-module.exports.__scatter = {
+module.exports.__module = {
   provides: ['simple_service', 'chain', 'one', 'promises']
 };
