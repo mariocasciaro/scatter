@@ -552,5 +552,5 @@ TODO
 
 ## Contributors
 
-* Mario Casciaro/Github @mariocasciaro/Twitter [@mariocasciaro](https://twitter.com/mariocasciaro)
-* <Your name here>
+* [Mario Casciaro](https://github.com/mariocasciaro) [@mariocasciaro](https://twitter.com/mariocasciaro)
+* [Your name here]
