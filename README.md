@@ -189,24 +189,45 @@ A module in Scatter has 3 states:
 
 All modules are **by default injected in an initialized state**. Sometimes though you might have **loops** between dependencies, in this case you should know how the module lifecycle works to find workarounds.
 
-For example, you might have a **deadlock** if you have two modules witch try to inject each other at instantiation time (using `args` with factory/constructor). To go around this, just inject one of the two modules with the `properties` command being sure you require a **instance only** of that module using the dependency `delayinit!<module name>`, otherwise you will have a deadlock at initialization time.
+For example, you will have a **deadlock** if you have two modules which try to inject each other at instantiation time (using `args` with factory/constructor). To go around this, just inject one of the two modules with the `properties` command being sure you require an **instance only** of that module using the dependency `delayinit!<module name>`, otherwise you will have a deadlock at initialization time.
 
 The same technique can be applied with deadlocks at initialization time (injected with `properties` or `initialize`).
 
-Don't worry, event with `delayinit!<module name>` the module will be fully initialized as soon as the main application cycle will start.
+PS: Don't worry, event with `delayinit!<module name>` the module will be fully initialized as soon as the main application cycle will start.
 
 
 __Example__
 
+`/core/foo.js`:
 ```javascript
-module.exports = function(foo) {
-    //`foo` here is instantiated but NOT initialized
+module.exports = function(bar) {
+    //bar is just the module instance, you can assign it, but be careful when using it at this point
+
+    var self = {
+      doSomething: function() {
+        console.log(bar.name);
+      }
+    };
+    return self;
 }
 module.exports.__module = {
-    args: ['foo'],
-    initialize: [['bar'], function(bar) {
-        //`bar` is guaranteed to be initialized
-    }]
+    args: ['delayinit!bar']
+}
+```
+
+`/core/bar.js`:
+```javascript
+module.exports = function() {
+    var self = {
+      name: 'bar',
+      useFoo: function() {
+        self.foo.doSomething();
+      }
+    };
+    return self;
+}
+module.exports.__module = {
+    properties: {foo: 'foo'}
 }
 ```
 
