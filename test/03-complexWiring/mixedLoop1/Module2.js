@@ -11,5 +11,5 @@ module.exports = function(Module1) {
 };
 module.exports.__module = {
   provides: {trigger_bootstrap: ['Module1']},
-  args: ['Module1']
+  args: ['delayinit!Module1']
 };

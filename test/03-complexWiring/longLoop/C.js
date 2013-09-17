@@ -4,6 +4,6 @@ module.exports = function() {
 };
 
 module.exports.__module = {
-  args: ['E'],
+  args: ['delayinit!E'],
   properties: {D: 'D'}
 };

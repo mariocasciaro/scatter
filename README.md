@@ -184,13 +184,16 @@ module.exports.__module = {
 A module in Scatter has 3 states:
 
 1. *Resolved* - The module is known to Scatter, it's kept in its internal data structures, but it's not ready yet to use.
-2. *Instantiated* - The module is instantiated (e.g. the factory or constructor is invoked). At this point the module instance exists but it's not fully usable yet, its dependencies are injected but they might not yet be initialized.
-3. *Initialized* - The module is initialized, the `initialize` method was already invoked and all the dependencies are initialized as well.
+2. *Instantiated* - The module is instantiated (e.g. the factory or constructor is invoked). At this point the module instance exists but it's not fully usable yet (the properties are not injected and `initialize` is not invoked).
+3. *Initialized* - The module is initialized, the `initialize` method was already invoked and all the dependencies are injected and initialized as well.
 
-To consistently manage **loops** and **deadlocks** between module dependencies it is important to note that:
+All modules are **by default injected in an initialized state**. Sometimes though you might have **loops** between dependencies, in this case you should know how the module lifecycle works to find workarounds.
 
-* During the *instantiation* phase (factory or constructor) and the injection of dependencies as `properties`, all the dependencies injected are in the state *instantiated*, so NOT yet ready to be used (but ready to be assigned, for example).
-* During the invocation of the `initialize` function, the invocation of services, and the `load` methods, all the dependencies injected are guaranteed to be in state *initialized* and ready to be used.
+For example, you might have a **deadlock** if you have two modules witch try to inject each other at instantiation time (using `args` with factory/constructor). To go around this, just inject one of the two modules with the `properties` command being sure you require a **instance only** of that module using the dependency `delayinit!<module name>`, otherwise you will have a deadlock at initialization time.
+
+The same technique can be applied with deadlocks at initialization time (injected with `properties` or `initialize`).
+
+Don't worry, event with `delayinit!<module name>` the module will be fully initialized as soon as the main application cycle will start.
 
 
 __Example__
@@ -319,7 +322,7 @@ To declare that a particle is going to override the modules of another one it is
 }
 ```
 
-Now as example look how it's possible to extend an hypothetical `User` module with some extra features. 
+Now as example look how it's possible to extend an hypothetical `User` module with some extra features.
 
 `/components/BasicUser/User.js`
 ```javascript
@@ -439,7 +442,7 @@ scatter.registerParticles([__dirname + '/components/*', __dirname + '/core']);
 Alias of [scatter.registerParticles](#scatter-registerparticles)
 
 <a name="scatter-setnodemodulesdir" />
-### scatter.setNodeModulesDir(nodeModulesDir[, disableAutodiscover])
+### scatter.setNodeModulesDir(nodeModulesDir)
 
 Tells Scatter where to find the `node_modules` directory. This enable the use of `npm!` dependencies, to require normal npm modules from the DI container. Also it will register all the Scatter particles found inside the npm modules.
 
