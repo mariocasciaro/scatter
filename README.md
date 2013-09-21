@@ -1,8 +1,5 @@
-[![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
-
-[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
-
-# Scatter
+Scatter
+======
 
 Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** to make your code whole again.
 
@@ -11,6 +8,10 @@ Applications created with Scatter are **extensible out-of-the box**. Since every
 Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__module` to extract the information needed to initialize the module and inject dependencies.
 
 **Note**: The API is currently unstable, the module is not following the semantic versioning at the moment because of the frequency of breaking changes.
+
+[![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
+
+[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
 
 ## TOC
 
@@ -193,7 +194,7 @@ For example, you will have a **deadlock** if you have two modules which try to i
 
 The same technique can be applied with deadlocks at initialization time (injected with `properties` or `initialize`).
 
-PS: Don't worry, event with `delayinit!<module name>` the module will be fully initialized as soon as the main application cycle will start.
+PS: Don't worry, even with `delayinit!<module name>` the module will be fully initialized as soon as the main application cycle starts.
 
 
 __Example__
@@ -201,7 +202,8 @@ __Example__
 `/core/foo.js`:
 ```javascript
 module.exports = function(bar) {
-    //bar is just the module instance, you can assign it, but be careful when using it at this point
+    //bar is just the module instance, you can assign it,
+    //but be careful when using it at this point
 
     var self = {
       doSomething: function() {
