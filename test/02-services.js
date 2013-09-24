@@ -156,4 +156,25 @@ describe('Scatter Services',function(){
       }).otherwise(done);
     });
   });
+
+
+  describe("Dependency loop", function() {
+    var scatter;
+    before(function() {
+      scatter = new Scatter();
+      scatter.registerParticles(__dirname + '/02-services/depLoop');
+    });
+
+    it('should preserve the order of non looping services', function(done) {
+      scatter.load('svc|sequence!simple_service').then(function(svc) {
+        return svc().then(function(results) {
+          expect(results).to.have.length('3');
+          expect(results[0]).to.be.equal('Module1');
+          expect(results[1]).to.be.equal('Module3');
+          expect(results[2]).to.be.equal('Module2');
+          done();
+        });
+      }).otherwise(done);
+    });
+  });
 });

@@ -110,7 +110,10 @@ describe('Scatter stateful container',function(){
 
 
   describe("Deadlock in dynamic modules", function() {
-    var scatter = new Scatter();
+    var scatter = new Scatter({
+      initializeTimeout: 200,
+      instatiateTimeout: 200
+    });
     scatter.registerParticles(__dirname + '/04-stateful/deadlock');
 
     it('should throw and exception', function(done) {
