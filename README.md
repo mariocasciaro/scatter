@@ -398,12 +398,12 @@ What the code above will print?
     * [scatter.load](#scatter-load)
     * [scatter.registerModule](#scatter-registermodule)
     * [scatter.registerModuleInstance](#scatter-registermoduleinstance)
-2. [__module descriptor](#scatter-descriptor)
+2. [__module descriptor](#module-descriptor)
+    * [type](#desc-type)
+    * [initialize](#desc-initialize)
     * [args](#desc-args)
     * [properties](#desc-properties)
     * [provides](#desc-provides)
-    * [initialize](#desc-initialize)
-    * [type](#desc-type)
     * [overrideProvides](#desc-overrideProvides)
 3. [Dependency types](#injected-dependencies)
     * [Modules](#modules)
@@ -555,26 +555,162 @@ hello: function() {
 scatter.registerModuleInstance('bar/mod', instance, {});
 ```
 
-<a name="scatter-descriptor" />
+<a name="module-descriptor" />
 ## The __module descriptor
-TODO
-<a name="desc-args" />
-### args
+The `__module` descriptor is a property of the raw module object used by Scatter to determine how to wire the module, how to instantiate it and what services provides.
 
-<a name="desc-properties" />
-### properties
+__Examples__
+```javascript
+Using an object literal:
+module.exports = {
+    //... put your module content here
+};
+module.exports.__module = {
+    //descriptor
+}
+```
 
-<a name="desc-provides" />
-### provides
+Using a factory:
+```javascript
+module.exports = function() {
+    return {
+        //... put your module content here
+    }
+};
+module.exports.__module = {
+    //descriptor
+}
+```
+<a name="desc-type" />
+### __module.type
+`String`. The `type` specifies how the module will be instantiated. There are 3 possible values:
+
+* `factory`: The module will be instantiated by invoking the module object. The return value of the invokation will become the module instance.
+* `constructor`: The module will be instantiated by invoking `new` on the module object.
+* `object`: The module will be taken as-is, no instantiation step will occur.
+
+Scatter automatically determines the type of a module, so usually **there is no need to specify the type**, unless you dno't want to force the autodetected value.
+Scatter detects the type following those simple rules:
+
+* If the module is a `Function` without a `prototype`, then `type='factory'`
+* If the module is a `Function` with a non-empty `prototype` then `type='constructor'`
+* All the rest defaults to `type: 'object'`
 
 <a name="desc-initialize" />
-### initialize
+### __module.initialize
+`Array: [[String], String|Function]`. A function to be executed as the last step of the module instantiation/initialization. The function can receive as arguments a set of injected dependencies, using the format:
+`[[<list of dependencies>], function(<injected dependencies>) {}]`
 
-<a name="desc-type" />
-### type
+The function can also be a `String`, in which case `module_instance[<function name>]` will be invoked.
+
+The `initialize` function is executed in the context of the module instance.
+
+__Example__
+```javascript
+module.exports = {
+    verb: "Hello",
+    name: "World",
+    punctuation: "!"
+}
+module.exports.__module = {
+    initialize: [['utilities/joiner'], function(joiner) {
+        this.phrase = joiner(this.verb, this.World, this.punctuation);
+    }]
+}
+```
+
+<a name="desc-args" />
+### __module.args
+`Array` of `Strings`. Lists the dependencies to be injected as arguments when invoking the module factory or the module constructor.
+
+__Example__
+```javascript
+module.exports = function(fooBar) {
+    //awesome stuff
+};
+module.exports.__module = {
+    args: ['foo/bar']
+}
+```
+
+<a name="desc-properties" />
+### __module.properties
+`Object`. Inject dependencies as module properties. The `properties` object, is a map where the keys are the names of the properties and the values are the dependencies to inject.
+
+The properties will be injected into the module instance in case a module is instantiated with a factory or a constructor.
+
+__Example__
+```javascript
+module.exports = function() {
+    var self = {
+        doSomething: function() {
+            return self.injectedProperty;
+        }
+    };
+    return self
+};
+module.exports.__module = {
+    properties: {
+        injectedProperty: 'foo/bar'
+    }
+}
+```
+
+<a name="desc-provides" />
+### __module.provides
+`Object`. Specifies the [Services](#services) exposed by the module. Each service name specified will map directly to a method with the same name exposed by the module instance.
+
+In the `provides` descriptor it is also possible to force the order of execution of the service, specifying if it should execute after or before the same service is invoked on the list of modules specified respectively in the `after` and `before` parameters. Globs are allowed when specifying modules in `after` and `before`.
+
+__Formats__
+
+* Long format:
+```javascript
+provides: {
+    <service_name>: {
+        after: [<list of modules>] OR '<single module>'
+        before: [<list of modules>] OR '<single module>'
+    }
+}
+```
+
+* Short format (if only `after` need to be specified):
+```javascript
+provides: {
+    <service_name>: [<list of modules>] OR '<single module>'
+}
+```
+
+* Very short format (if no `before`/`after` need to be specified):
+```javascript
+provides: [<list of service names>]
+```
+
+* Lonely format (if only one service need to be specified):
+```javascript
+provides: '<service name>'
+```
+
+__Examples__
+```javascript
+module.exports = {
+    helloService: function() {
+        //baboooom
+    }
+};
+module.exports.__module = {
+    provides: {
+        helloService: {
+            after: ['namespace/to/module/*'],
+            before: ['foo/bar/AModule']
+        }
+    }
+}
+```
 
 <a name="desc-overrideprovides" />
-### overrideProvides
+### __module.overrideProvides
+`Boolean`, default: `false`. If the module is extending/overriding another module, this flag tells Scatter if the parent `provides` descriptor has to be overridden (`true`) or merged (`false`)
 
 ## Contributors
 
