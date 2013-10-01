@@ -38,7 +38,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 
 ## Getting started
 
-Define the module:
+Define a module:
 
 `/core/hello.js`:
 ```javascript
@@ -75,7 +75,7 @@ scatter.load('hello').then(function(mod) {
 
 ```
 
-(Usually you will never need to manually `load` a module, modules are normally wired together using [dependency injection](#dependency-injection) , this is just a demonstration)
+(Usually you will never need to manually `load` a module, modules are normally wired together using [dependency injection](#dependency-injection) )
 
 
 ## Module resolver
@@ -405,19 +405,20 @@ What the code above will print?
     * [properties](#desc-properties)
     * [provides](#desc-provides)
     * [overrideProvides](#desc-overrideProvides)
-3. [Dependency types](#injected-dependencies)
-    * [Modules](#modules)
-    * [Services](#services)
-    * [Scatter container](#scatter-container)
-    * [Npm modules](#npm-modules)
-4. [Particle descriptor(particle.json)](#particle_descriptor)
+3. [Dependency loaders](#dependency-loaders)
+    * [Default](#loader-module)
+    * [npm!](#loader-npm)
+    * [svc!](#loader-svc)
+    * [container!](#loader-container)
+    * [delayInit!](#loader-delay)
+4. [Particle descriptor(particle.json)](#particle-descriptor)
 
 
 ## Scatter
 
 The `Scatter` object is the entry point to create a brand new DI container for an application.
 
-<a name="scatter-constructor" />
+<a name="scatter-constructor"></a>
 ### new Scatter(options)
 
 Create a new Scatter DI container.
@@ -430,8 +431,8 @@ __Arguments__
         * `start()`
         * `pause()`
         * `end()`
-    * `instantiateTimeout` - The number of milliseconds to wait for a module to be instantiated. Defaults to 700ms.
-    * `initializeTimeout` - The number of milliseconds to wait for a module to be initialized. Defaults to 700ms.
+    * `instantiateTimeout` - The number of milliseconds to wait for a module to be instantiated. Defaults to 5000ms.
+    * `initializeTimeout` - The number of milliseconds to wait for a module to be initialized. Defaults to 5000ms.
 
 __Example__
 
@@ -443,7 +444,7 @@ var scatter = new Scatter({
 });
 ```
 
-<a name="scatter-registerparticles" />
+<a name="scatter-registerparticles"></a>
 ### scatter.registerParticles(particlesDirs)
 
 Register one or more particles with the Scatter container.
@@ -459,12 +460,12 @@ var scatter = new Scatter();
 scatter.registerParticles([__dirname + '/components/*', __dirname + '/core']);
 ```
 
-<a name="scatter-registerparticle" />
+<a name="scatter-registerparticle"></a>
 ### scatter.registerParticle(particleDir)
 
 Alias of [scatter.registerParticles](#scatter-registerparticles)
 
-<a name="scatter-setnodemodulesdir" />
+<a name="scatter-setnodemodulesdir"></a>
 ### scatter.setNodeModulesDir(nodeModulesDir)
 
 Tells Scatter where to find the `node_modules` directory. This enable the use of `npm!` dependencies, to require normal npm modules from the DI container. Also it will register all the Scatter particles found inside the npm modules.
@@ -494,7 +495,7 @@ scatter.load('foo/bar').then(function(mod) {
 }
 ```
 
-<a name="scatter-registermodule" />
+<a name="scatter-registermodule"></a>
 ### scatter.registerModule(name, rawModule [, descriptor])
 
 Register a raw module that is not yet instantiated nor initialized. Scatter will take care to instantiate and initialize it when needed, using the information in the `__module` descriptor.
@@ -527,7 +528,7 @@ scatter.registerModule('bar/mod', mod);
 ```
 
 
-<a name="scatter-registermoduleinstance" />
+<a name="scatter-registermoduleinstance"></a>
 ### scatter.registerModuleInstance(name, instance[, descriptor])
 
 Registers a module instance already initialized and wired outside the Scatter container.
@@ -555,13 +556,13 @@ hello: function() {
 scatter.registerModuleInstance('bar/mod', instance, {});
 ```
 
-<a name="module-descriptor" />
+<a name="module-descriptor"></a>
 ## The __module descriptor
 The `__module` descriptor is a property of the raw module object used by Scatter to determine how to wire the module, how to instantiate it and what services provides.
 
 __Examples__
-```javascript
 Using an object literal:
+```javascript
 module.exports = {
     //... put your module content here
 };
@@ -581,22 +582,22 @@ module.exports.__module = {
     //descriptor
 }
 ```
-<a name="desc-type" />
+<a name="desc-type"></a>
 ### __module.type
 `String`. The `type` specifies how the module will be instantiated. There are 3 possible values:
 
-* `factory`: The module will be instantiated by invoking the module object. The return value of the invokation will become the module instance.
+* `factory`: The module will be instantiated by invoking the module object as a function. The return value of the invocation will become the module instance.
 * `constructor`: The module will be instantiated by invoking `new` on the module object.
 * `object`: The module will be taken as-is, no instantiation step will occur.
 
-Scatter automatically determines the type of a module, so usually **there is no need to specify the type**, unless you dno't want to force the autodetected value.
+Scatter automatically determines the type of a module, so usually **there is no need to specify the type**, unless you don't want to force the autodetected value.
 Scatter detects the type following those simple rules:
 
 * If the module is a `Function` without a `prototype`, then `type='factory'`
 * If the module is a `Function` with a non-empty `prototype` then `type='constructor'`
 * All the rest defaults to `type: 'object'`
 
-<a name="desc-initialize" />
+<a name="desc-initialize"></a>
 ### __module.initialize
 `Array: [[String], String|Function]`. A function to be executed as the last step of the module instantiation/initialization. The function can receive as arguments a set of injected dependencies, using the format:
 `[[<list of dependencies>], function(<injected dependencies>) {}]`
@@ -619,7 +620,7 @@ module.exports.__module = {
 }
 ```
 
-<a name="desc-args" />
+<a name="desc-args"></a>
 ### __module.args
 `Array` of `Strings`. Lists the dependencies to be injected as arguments when invoking the module factory or the module constructor.
 
@@ -633,9 +634,9 @@ module.exports.__module = {
 }
 ```
 
-<a name="desc-properties" />
+<a name="desc-properties"></a>
 ### __module.properties
-`Object`. Inject dependencies as module properties. The `properties` object, is a map where the keys are the names of the properties and the values are the dependencies to inject.
+`Object`. Inject dependencies as module instance properties. The `properties` object, is a map where the keys are the names of the properties and the values are the dependencies to inject.
 
 The properties will be injected into the module instance in case a module is instantiated with a factory or a constructor.
 
@@ -656,7 +657,7 @@ module.exports.__module = {
 }
 ```
 
-<a name="desc-provides" />
+<a name="desc-provides"></a>
 ### __module.provides
 `Object`. Specifies the [Services](#services) exposed by the module. Each service name specified will map directly to a method with the same name exposed by the module instance.
 
@@ -666,19 +667,19 @@ __Formats__
 
 * Long format:
 ```javascript
-provides: {
-    <service_name>: {
-        after: [<list of modules>] OR '<single module>'
-        before: [<list of modules>] OR '<single module>'
+    provides: {
+        <service_name>: {
+            after: [<list of modules>] OR '<single module>'
+            before: [<list of modules>] OR '<single module>'
+        }
     }
-}
 ```
 
 * Short format (if only `after` need to be specified):
 ```javascript
-provides: {
-    <service_name>: [<list of modules>] OR '<single module>'
-}
+    provides: {
+        <service_name>: [<list of modules>] OR '<single module>'
+    }
 ```
 
 * Very short format (if no `before`/`after` need to be specified):
@@ -708,9 +709,124 @@ module.exports.__module = {
 }
 ```
 
-<a name="desc-overrideprovides" />
+<a name="desc-overrideprovides"></a>
 ### __module.overrideProvides
 `Boolean`, default: `false`. If the module is extending/overriding another module, this flag tells Scatter if the parent `provides` descriptor has to be overridden (`true`) or merged (`false`)
+
+
+<a name="dependency-loaders"></a>
+## Dependency loaders
+
+Scatter comes with a versatile and extensible **dependency loader**. With this feature, the DI container can inject not only modules but any sort of objects. 
+
+It is possible to invoke a specific loader with the syntax:
+`<loader name>|<loader params>!<dependency name>`
+
+Now follows a list of loaders shipped with Scatter.
+
+<a name="loader-module"></a>
+### Default Loader
+
+By default, if no loader is specified in the dependency, a module will be loaded.
+
+__Example__
+```javascript
+module.exports = function(moduleDependency) {
+    [...]
+}
+module.exports.__module = {
+    args: ['a/module/dependency']
+}
+```
+
+<a name="loader-svc"></a>
+### svc!
+
+The `svc!` loader allows to load [Services](#services). It will load a function representin the Service that when invoked will return a promise for the service executution.
+
+__Syntax__
+
+`svc|[<mode>]!<service name>`
+
+Where:
+
+* `<mode>`: Optional, if not specified a Service object will be returned with methods named after each `mode` available (and described below). Modes can be:
+    * `sequence`: the methods in the service will be invoked sequencially
+    * `pipeline`: the methods in the service will be invoked in pipeline where the return value of a method will be given as input to the next one.
+    * `any`: the Service invocation will return immediately as soon as the first method invocation in the chain will return a non undefined value.
+    * `invoke`: Alias of `sequence`, to be used when the executin mode is not relevant.
+* `<service name>` is the name of the service in the form `<namespace>/<service name>`. The Service will invoke `<service name>` over all the modules providing `<service name>` under the namespace `<namespace>` recursively.
+
+__Example__
+```javascript
+module.exports = function(service) {
+    return {
+        hello: function() {
+            service("hello").then(function() {
+                //done
+            });
+        }
+    }
+}
+module.exports.__module = {
+    args: ['svc|any!foo/bar/helloService']
+}
+```
+
+
+<a name="loader-npm"></a>
+### npm!
+
+The `npm!` loader allows to inject an npm module from the `node_modules` directory specified in the Scatter object (see [setNodeModulesDir](#scatter-setnodemodulesdir)). 
+
+This is different from invoking `require('module')`, since the module will not be resolved using the default Node.js convensions (e.g. no relative dirs allowed, does not load the module from the module's local `node_modules` dir). Instead, the npm module will always be resolved from the `node_modules` directory configured when the Scatter container is initialized. 
+
+The advantage of this, is that different Scatter modules will always access the same version (and same instance!) of the npm module they require with `npm!`. Although this is not always desirable, sometimes can be very useful when your modules need to share an npm module across all the application they are injected to.
+
+__Syntax__
+
+`npm!<npm module name>`
+
+__Example__
+
+```javascript
+module.exports = function(express) {
+    [...]
+}
+module.exports.__modules = {
+    args = ['npm!express']
+}
+```
+
+<a name="loader-container"></a>
+### container!
+
+Will load a private version of the Scatter container for the module requiring it. The loaded container will only have the `load` method.
+
+__Example__
+```javascript
+module.exports = function(container) {
+    [...]
+}
+module.exports.__modules = {
+    args = ['container!']
+}
+```
+
+<a name="loader-delay"></a>
+### delayInit!
+
+This loader will cause the DI container to load a **not initialized** module (only instantiated). This might be useful in case there are loops into module dependencies and delaying the initialization of the module can solve the loop. Please look at [module lifecycle](#module-lifecycle) for some use cases.
+
+<a name="particle-descriptor"></a>
+## particle.json
+
+The `particle.json` file describes and configures a Scatter component.
+
+* `name`: The name of the particle.  Optional if subparticles defined.
+* `subparticles`: `Array`, Optional. A list of relative paths pointing to other directories containing a particle (and therefore a `particle.json` file).
+* `overrides`: `Array`, Optional. A list of components (particle names) that this particle  is overriding/extending.
+
 
 ## Contributors
 
