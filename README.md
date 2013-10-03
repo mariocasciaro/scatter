@@ -7,11 +7,17 @@ Applications created with Scatter are **extensible out-of-the box**. Since every
 
 Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__module` to extract the information needed to initialize the module and inject dependencies.
 
-**Note**: The API is currently unstable, the module is not following the semantic versioning at the moment because of the frequency of breaking changes.
-
 [![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
 
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter) [![Dependency Status](https://david-dm.org/mariocasciaro/scatter.png)](https://david-dm.org/mariocasciaro/scatter)
+
+## Stability
+
+2 - Unstable
+The API is in the process of settling, but has not yet had
+sufficient real-world testing to be considered stable. Backwards-compatibility
+will be maintained if reasonable.
+
 
 ## TOC
 
