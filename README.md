@@ -1,11 +1,11 @@
-Scatter
+Synopsis
 ======
 
 Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** to make your code whole again.
 
-Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. On top of that by using [Services](#services) you can provide explicit extension points to your application.
+Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. In addition by using Scatter [Services](#services) you can provide explicit extension points to your application.
 
-Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__module` to extract the information needed to initialize the module and inject dependencies.
+Every module created for Scatter can be used even without the Scatter DI container, they are usually javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads a property named `__module` to extract the information to initialize the module and inject dependencies.
 
 [![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
 
@@ -14,6 +14,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 ## Stability
 
 2 - Unstable
+
 The API is in the process of settling, but has not yet had
 sufficient real-world testing to be considered stable. Backwards-compatibility
 will be maintained if reasonable.
@@ -21,15 +22,17 @@ will be maintained if reasonable.
 
 ## TOC
 
-1. [Features](#features)
-2. [Getting Started](#getting-started)
-3. [Module resolver](#module-resolver)
-3. [Dependency Injection](#dependency-injection)
-4. [Module lifecycle](#module-lifecycle)
-5. [Services](#services)
-6. [Extend and Override Modules](#extend)
-7. [API Docs](#api)
-8. [Contributors](#contributors)
+* [Features](#features)
+* [Guide](#guide)
+    1. [Examples](#examples)
+    1. [Getting Started](#getting-started)
+    1. [Module resolver](#module-resolver)
+    1. [Dependency Injection](#dependency-injection)
+    1. [Module lifecycle](#module-lifecycle)
+    1. [Services](#services)
+    1. [Extend and Override Modules](#extend)
+* [API Docs](#api)
+* [Contributors](#contributors)
 
 
 ## Features
@@ -41,6 +44,11 @@ will be maintained if reasonable.
 - Instantiate and initialize modules asynchronously using promises
 - Support for hooks (Scatter services), with sync/async execution
 
+# Guide
+
+## Examples
+
+If you prefer code to english text, then go straight to the [examples](https://github.com/mariocasciaro/scatter/tree/master/examples) directory.
 
 ## Getting started
 
@@ -723,7 +731,7 @@ module.exports.__module = {
 <a name="dependency-loaders"></a>
 ## Dependency loaders
 
-Scatter comes with a versatile and extensible **dependency loader**. With this feature, the DI container can inject not only modules but any sort of objects. 
+Scatter comes with a versatile and extensible **dependency loader**. With this feature, the DI container can inject not only modules but any sort of objects.
 
 It is possible to invoke a specific loader with the syntax:
 `<loader name>|<loader params>!<dependency name>`
@@ -783,9 +791,9 @@ module.exports.__module = {
 <a name="loader-npm"></a>
 ### npm!
 
-The `npm!` loader allows to inject an npm module from the `node_modules` directory specified in the Scatter object (see [setNodeModulesDir](#scatter-setnodemodulesdir)). 
+The `npm!` loader allows to inject an npm module from the `node_modules` directory specified in the Scatter object (see [setNodeModulesDir](#scatter-setnodemodulesdir)).
 
-This is different from invoking `require('module')`, since the module will not be resolved using the default Node.js convensions (e.g. no relative dirs allowed, does not load the module from the module's local `node_modules` dir). Instead, the npm module will always be resolved from the `node_modules` directory configured when the Scatter container is initialized. 
+This is different from invoking `require('module')`, since the module will not be resolved using the default Node.js convensions (e.g. no relative dirs allowed, does not load the module from the module's local `node_modules` dir). Instead, the npm module will always be resolved from the `node_modules` directory configured when the Scatter container is initialized.
 
 The advantage of this, is that different Scatter modules will always access the same version (and same instance!) of the npm module they require with `npm!`. Although this is not always desirable, sometimes can be very useful when your modules need to share an npm module across all the application they are injected to.
 
@@ -832,9 +840,10 @@ The `particle.json` file describes and configures a Scatter component.
 * `name`: The name of the particle.  Optional if subparticles defined.
 * `subparticles`: `Array`, Optional. A list of relative paths pointing to other directories containing a particle (and therefore a `particle.json` file).
 * `overrides`: `Array`, Optional. A list of components (particle names) that this particle  is overriding/extending.
+* `exclude`: `Array`, Optional. An list of files to exclude from being considered for DI (e.g. client side js). Uses Globs.
 
 
-## Contributors
+# Contributors
 
 * [Mario Casciaro](https://github.com/mariocasciaro) [@mariocasciaro](https://twitter.com/mariocasciaro)
 * [Your name here]
