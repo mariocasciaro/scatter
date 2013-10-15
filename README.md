@@ -846,3 +846,6 @@ The `particle.json` file describes and configures a Scatter component.
 
 * [Mario Casciaro](https://github.com/mariocasciaro) [@mariocasciaro](https://twitter.com/mariocasciaro)
 * [Your name here]
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mariocasciaro/scatter/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
