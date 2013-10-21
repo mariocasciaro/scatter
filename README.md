@@ -9,7 +9,7 @@ Every module created for Scatter can be used even without the Scatter DI contain
 
 [![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
 
-[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter) [![Dependency Status](https://david-dm.org/mariocasciaro/scatter.png)](https://david-dm.org/mariocasciaro/scatter)
+[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter) [![Dependency Status](https://david-dm.org/mariocasciaro/scatter.png)](https://david-dm.org/mariocasciaro/scatter) [![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
 
 ## Stability
 
