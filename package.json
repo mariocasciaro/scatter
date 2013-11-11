@@ -3,7 +3,7 @@
     "name": "Mario Casciaro"
   },
   "name": "scatter",
-  "description": "Out-of-the-box extensibility for Node.js applications",
+  "description": "IoC container and out-of-the-box extensibility for Node.js applications",
   "homepage": "https://github.com/mariocasciaro/scatter",
   "version": "0.5.7",
   "repository": {
@@ -13,7 +13,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "lodash": "~2.2.0",
-    "when": "~2.5.0",
+    "when": "~2.6.0",
     "minimatch": "~0.2.12",
     "glob": "~3.2.3",
     "readdirp": "~0.3.1",
