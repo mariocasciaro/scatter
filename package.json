@@ -12,7 +12,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "lodash": "~2.2.0",
+    "lodash": "~2.3.0",
     "when": "~2.6.0",
     "minimatch": "~0.2.12",
     "glob": "~3.2.3",
