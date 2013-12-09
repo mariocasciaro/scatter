@@ -439,7 +439,7 @@ Create a new Scatter DI container.
 __Arguments__
 
 * `options` - An object containing a set of config options
-    * `log` - A function in the format `function(level, message)` that will be used by Scatter to log messages. `level` is one of the npm log levels (e.g. silly, debug, verbose,warn, error).
+    * `log` - A function in the format `function(level, message)` that will be used by Scatter to log messages. `level` is one of the log levels (trace, debug, info ,warn, error).
     * `startProfiling` - A function in the format `function([sessionName, logLevel])` and returns that an object used for profiling some of the Scatter internals. This object should contai 3 methods:
         * `start()`
         * `pause()`
