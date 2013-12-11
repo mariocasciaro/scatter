@@ -5,7 +5,7 @@
   "name": "scatter",
   "description": "IoC container and out-of-the-box extensibility for Node.js applications",
   "homepage": "https://github.com/mariocasciaro/scatter",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/mariocasciaro/scatter.git"
