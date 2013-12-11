@@ -126,7 +126,7 @@ describe('Scatter Complex wiring',function() {
     });
   });
 
-  describe("bootstrapAll()", function() {
+  describe("initializeAll()", function() {
     var scatter = new Scatter({
       initializeTimeout: 200,
       instatiateTimeout: 200
@@ -134,7 +134,7 @@ describe('Scatter Complex wiring',function() {
     scatter.registerParticles(__dirname + '/03-complexWiring/loopOnInit');
 
     it('should find deadlocks in initialization', function(done) {
-      scatter.bootstrapAll().then(function() {
+      scatter.initializeAll().then(function() {
         done(new Error("No exception thrown"));
       }).otherwise(function(err) {
         //expect(results).to.have.length(2);
@@ -145,7 +145,7 @@ describe('Scatter Complex wiring',function() {
   });
 
 
-  describe("bootstrapAll()", function() {
+  describe("initializeAll()", function() {
     var scatter = new Scatter({
       initializeTimeout: 200,
       instatiateTimeout: 200
@@ -153,7 +153,7 @@ describe('Scatter Complex wiring',function() {
     scatter.registerParticles(__dirname + '/03-complexWiring/loopFactories');
 
     it('should find deadlocks in instantiation', function(done) {
-      scatter.bootstrapAll().then(function() {
+      scatter.initializeAll().then(function() {
         done(new Error("No exception thrown"));
       }).otherwise(function(err) {
         //expect(results).to.have.length(2);

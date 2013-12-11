@@ -87,6 +87,26 @@ describe('Scatter basic loading', function() {
   });
 
 
+  describe("Manual module registration", function() {
+    var scatter;
+    before(function() {
+      scatter = new Scatter();
+      scatter.registerParticles(TEST_DIR + '/types');
+    });
+
+    it('should return the manually registered module', function(done) {
+      scatter.registerModuleInstance('thiswasanissue', {
+        val: "it should be fixed"
+      });
+      
+      scatter.load('thiswasanissue').then(function(mod) {
+        expect(mod.val).equal("it should be fixed");
+        done();
+      }).otherwise(done);
+    });
+  });
+
+
   describe("Dependency injection", function() {
     var scatter;
     before(function() {
@@ -254,13 +274,43 @@ describe('Scatter basic loading', function() {
         TEST_DIR + '/2rootsScopedAssemble/base1',
         TEST_DIR + '/2rootsScopedAssemble/base2'
       ]);
-      scatter.assemble("namespace");
+      var modules = scatter.assemble("namespace");
+      expect(modules).to.have.keys('namespace/Module1');
       
       var inspector = require(TEST_DIR + '/2rootsScopedAssemble/inspector');
       expect(inspector).to.not.have.property('b1Module1');
       expect(inspector).to.not.have.property('b2Module1');
       expect(inspector).to.not.have.property('b2Module2');
       expect(inspector).to.have.property('b2NamespaceModule1' , true);
+    });
+
+    it('should load only matching modules in advance (with caching)', function() {
+      var scatter = new Scatter();
+      scatter.registerParticles([
+        TEST_DIR + '/2rootsScopedAssemble/base1',
+        TEST_DIR + '/2rootsScopedAssemble/base2'
+      ]);
+      scatter.assemble("namespace");
+      var modules = scatter.assemble("namespace");
+      expect(modules).to.have.keys('namespace/Module1');
+
+      var inspector = require(TEST_DIR + '/2rootsScopedAssemble/inspector');
+      expect(inspector).to.not.have.property('b1Module1');
+      expect(inspector).to.not.have.property('b2Module1');
+      expect(inspector).to.not.have.property('b2Module2');
+      expect(inspector).to.have.property('b2NamespaceModule1' , true);
+    });
+
+
+    it('should load assemble all (with caching)', function() {
+      var scatter = new Scatter();
+      scatter.registerParticles([
+        TEST_DIR + '/2rootsScopedAssemble/base1',
+        TEST_DIR + '/2rootsScopedAssemble/base2'
+      ]);
+      scatter.assemble();
+      var modules = scatter.assemble();
+      expect(modules).to.have.keys('namespace/Module1', 'Module1', 'Module2');
     });
   });
 
