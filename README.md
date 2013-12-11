@@ -19,7 +19,7 @@ Every module created for Scatter **can be used even without the Scatter DI conta
 
 * Several internal improvement, including plugin system refactoring, new benchmarking framework, performance optimizations.
 * **Breaking changes**:
-  * The `log` object provided to the Scatter constructor must expect `trace, debug, info, warn, error` as levels instead of `silly, debug, verbose, warn, error`.
+  * The `log` object provided to the Scatter constructor must expect `trace, debug, info, warn, error` as levels instead of `silly, verbose, info, warn, error`.
 
 [Full changelog](https://github.com/mariocasciaro/scatter/blob/master/CHANGES.md)
 
@@ -101,12 +101,12 @@ module.exports.__module = {
 
 ## Documentation
 
-* ### [Guide](https://github.com/mariocasciaro/scatter/wiki/Guide)
-* ### [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
+#### [Guide](https://github.com/mariocasciaro/scatter/wiki/Guide)
+#### [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
 
 # Credits
 
-* [Mario Casciaro](https://github.com/mariocasciaro) = Twitter [@mariocasciaro](https://twitter.com/mariocasciaro)
+* [Mario Casciaro](https://github.com/mariocasciaro) - Twitter [@mariocasciaro](https://twitter.com/mariocasciaro)
 * [Your name here]
 
 -----
