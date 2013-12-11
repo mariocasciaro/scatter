@@ -2,5 +2,6 @@ node_modules
 .c9revisions
 .settings
 .idea
-test/01-load/2rootsAutodiscoverLink/base2
+/test/01-load/2rootsAutodiscoverLink/base2
 npm-debug.log
+/coverage
