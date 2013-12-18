@@ -24,8 +24,8 @@ describe('Scatter Services',function(){
       scatter.load('svc!simple_service').then(function(svc) {
         return svc.sequence().then(function(results) {
           expect(results).to.have.length('3');
-          expect(results).to.contain('l1/l2/Module1');
-          expect(results).to.contain('l1/Module2');
+          expect(results).to.contain('l1/l2/Module1(gen)');
+          expect(results).to.contain('l1/Module2(gen)');
           expect(results).to.contain('Module3');
           done();
         });
@@ -55,7 +55,7 @@ describe('Scatter Services',function(){
 
   describe("order and execution modes", function() {
     var scatter;
-    before(function() {
+    beforeEach(function() {
       scatter = new Scatter();
       scatter.registerParticles(__dirname + '/02-services/orderAndModes');
     });
@@ -123,7 +123,7 @@ describe('Scatter Services',function(){
 
   describe("Injected service", function() {
     var scatter;
-    before(function() {
+    beforeEach(function() {
       scatter = new Scatter();
       scatter.registerParticles(__dirname + '/02-services/injectedService');
     });
@@ -142,7 +142,7 @@ describe('Scatter Services',function(){
 
   describe("2PhaseLoading", function() {
     var scatter;
-    before(function() {
+    beforeEach(function() {
       scatter = new Scatter();
       scatter.registerParticles(__dirname + '/02-services/2phaseLoading');
     });
@@ -159,9 +159,14 @@ describe('Scatter Services',function(){
 
 
   describe("Dependency loop", function() {
-    var scatter;
-    before(function() {
-      scatter = new Scatter();
+    var scatter, loopDetected;
+    beforeEach(function() {
+      loopDetected = false;
+      scatter = new Scatter({
+        log: function(level, message) {
+          loopDetected = loopDetected || /dependency loop/.test(message);
+        }
+      });
       scatter.registerParticles(__dirname + '/02-services/depLoop');
     });
 
@@ -170,6 +175,33 @@ describe('Scatter Services',function(){
         return svc().then(function(results) {
           expect(results).to.have.length('3');
           expect(results[2]).to.be.equal('Module2');
+          expect(loopDetected).to.be.true;
+          done();
+        });
+      }).otherwise(done);
+    });
+    
+    it('should not impose order if no specific dependency is added', function(done) {
+      scatter.load('svc|sequence!simple_service3').then(function(svc) {
+        return svc().then(function(results) {
+          expect(results).to.have.length('3');
+          expect(results[0]).to.be.equal('Module1');
+          expect(results[1]).to.be.equal('Module2');
+          expect(results[2]).to.be.equal('Module3');
+          expect(loopDetected).to.be.true;
+          done();
+        });
+      }).otherwise(done);
+    });
+    
+    it('should impose order if more specific dependency is added', function(done) {
+      scatter.load('svc|sequence!simple_service2').then(function(svc) {
+        return svc().then(function(results) {
+          expect(results).to.have.length('3');
+          expect(results[0]).to.be.equal('Module2');
+          expect(results[1]).to.be.equal('Module1');
+          expect(results[2]).to.be.equal('Module3');
+          expect(loopDetected).to.be.true;
           done();
         });
       }).otherwise(done);

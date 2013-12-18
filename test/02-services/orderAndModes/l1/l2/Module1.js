@@ -16,10 +16,10 @@ module.exports = {
     throw new Error("Catch this!");
   }
 };
-module.exports.__module = {
+module.exports.__module = { 
   provides: {
     simple_service: {before: 'Module3', after: 'l1/Module2'},
-    chain: {before: ['l1/Module2']},
+    chain: {before: ['../Module2']},
     one: {before: ['l1/Module2']},
     promises: {before: ['l1/Module2']},
     exc: []

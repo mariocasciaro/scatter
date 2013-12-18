@@ -166,6 +166,29 @@ describe('Scatter basic loading', function() {
   });
   
   
+  describe("Relative dependencies", function() {
+    var scatter;
+    before(function() {
+      scatter = new Scatter({
+      //  log: function(level, message) {
+      //    console.log(message);
+      //  }
+      });
+      scatter.registerParticles(TEST_DIR + '/relative');
+    });
+
+
+    it('should inject relative dependencies', function(done) {
+      scatter.load('namespace/Module').then(function(mod) {
+        expect(mod).to.have.deep.property('mod1.prop', 'Module1');
+        expect(mod).to.have.deep.property('mod2.prop', 'Module2');
+        expect(mod).to.have.deep.property('mod3.prop', 'Module3');
+        done();
+      }).otherwise(done);
+    });
+  });
+  
+  
   describe("Multiple components", function() {
     it('should form a unique namespace', function(done) {
       var scatter = new Scatter();
