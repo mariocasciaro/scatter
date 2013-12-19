@@ -6,16 +6,11 @@ module.exports = {
   
   simple_service2: function() {
     return "Module1";
-  },
-  
-  simple_service3: function() {
-    return "Module1";
   }
 };
 module.exports.__module = {
   provides: {
     simple_service: {before: '**'},
-    simple_service2: {before: './**', after: "Module2"},
-    simple_service3: {before: '**'}
+    simple_service2: {before: './**', after: "Module3"}
   }
 };

@@ -58,7 +58,7 @@ var self = module.exports = {
 
 module.exports.__module = {
     //Inject the "world" module as a property
-    properties: "world";
+    properties: "world"
 };
 ```
 
@@ -78,7 +78,7 @@ var self = module.exports = function(hello) {
 
 module.exports.__module = {
     //Inject the "world" module as a property
-    args: ["say/hello"];
+    args: ["say/hello"]
 };
 ```
 #### Services
@@ -95,7 +95,7 @@ var self = module.exports = function(registerRoutesSvc) {
 
 module.exports.__module = {
     //Inject a service as dependency!
-    args: ["svc|sequence!routes/register"];
+    args: ["svc|sequence!routes/register"]
 };
 ```
 
