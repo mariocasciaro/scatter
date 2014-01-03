@@ -21,7 +21,7 @@ describe('Scatter basic loading', function() {
         expect(mod).to.exist;
         expect(mod).to.have.property('prop', 'mod1');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should load and return a module under a namespace', function(done) {
@@ -34,16 +34,16 @@ describe('Scatter basic loading', function() {
           expect(mod).to.have.property('prop', 'namespace/namespace1/mod2');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should throw an exception if module does not exists', function(done) {
       scatter.load('VOID').then(function(mod) {
         done(new Error("Exception not thrown, returned: " + mod));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/Cannot find/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -58,31 +58,31 @@ describe('Scatter basic loading', function() {
     it('should not explode with a NULL module', function(done) {
       scatter.load('Null').then(function(mod) {
         done(new Error("Exception not thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/Cannot find/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should instantiate with a factory', function(done) {
       scatter.load('Factory').then(function(mod) {
         expect(mod).to.have.property('prop','factory');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should instantiate with a constructor', function(done) {
       scatter.load('Constructor').then(function(mod) {
         expect(mod).to.have.property('prop','constructor');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should instantiate with a constructor (heuristic)', function(done) {
       scatter.load('AutoConstructor').then(function(mod) {
         expect(mod).to.have.property('prop','autoconstructor');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -102,7 +102,7 @@ describe('Scatter basic loading', function() {
       scatter.load('thiswasanissue').then(function(mod) {
         expect(mod.val).equal("it should be fixed");
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -123,21 +123,21 @@ describe('Scatter basic loading', function() {
       scatter.load('modules/RequireFactory').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depObj');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should inject modules in constructor', function(done) {
       scatter.load('modules/RequireConstr').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depFactory');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should inject modules in properties', function(done) {
       scatter.load('modules/RequireProps').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depFactory');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     
@@ -145,23 +145,23 @@ describe('Scatter basic loading', function() {
       scatter.load('modules/RequireOnInit').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depFactory');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should inject modules in "initialize" (Normalized)', function(done) {
       scatter.load('modules/RequireOnInitNorm').then(function(mod) {
         expect(mod).to.have.deep.property('dep', 'done!');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should not load a dynamic module from a static one', function(done) {
       scatter.load('modules/RequireDynamicErr').then(function(mod) {
         done(new Error("Exception not thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/Can't require a dynamic module from a static container/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
   
@@ -184,7 +184,7 @@ describe('Scatter basic loading', function() {
         expect(mod).to.have.deep.property('mod2.prop', 'Module2');
         expect(mod).to.have.deep.property('mod3.prop', 'Module3');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
   
@@ -200,7 +200,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module2').then(function(mod) {
         expect(mod).to.have.deep.property('prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
 
@@ -214,7 +214,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     
@@ -229,7 +229,7 @@ describe('Scatter basic loading', function() {
         expect(mod).to.have.deep.property('parent.prop', 'comp3');
         expect(mod).to.have.deep.property('parent.parent.prop', 'comp2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should include subparticles from particle.json', function(done) {
@@ -239,7 +239,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should expand globs', function(done) {
@@ -249,7 +249,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -280,12 +280,12 @@ describe('Scatter basic loading', function() {
       expect(inspector).to.not.have.property('b1Module4');
       scatter.load('ignored/ignorethis/Module3').then(function() {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err){
+      }).catch(function(err){
         expect(err).to.match(/Cannot find/);
         expect(inspector).to.not.have.property('b1Module3');
         expect(inspector).to.not.have.property('b1Module4');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
   
@@ -348,7 +348,7 @@ describe('Scatter basic loading', function() {
         expect(mod.VERSION).to.be.equal(require('lodash').VERSION);
       }).then(function() {
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should discover modules under node_modules', function(done) {
@@ -358,7 +358,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should discover roots under symlinked dirs', function(done) {
@@ -378,7 +378,7 @@ describe('Scatter basic loading', function() {
       scatter.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'mod2');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 });

@@ -15,7 +15,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.property('thisIsDynamic', true);
         expect(mod).to.have.property('counter', 1);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should not re-instantiate for same context', function(done) {
@@ -24,7 +24,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.property('thisIsDynamic', true);
         expect(mod).to.have.property('counter', 1);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('returns a new dynamic module with a new context', function(done) {
@@ -34,7 +34,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.property('thisIsDynamic', true);
         expect(mod).to.have.property('counter', 2);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
   
@@ -52,7 +52,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.deep.property('staticDep.data', 'Module3');
         expect(mod).to.have.deep.property('staticDep.count', 1);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('injects without reloading', function(done) {
@@ -63,7 +63,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.deep.property('staticDep.data', 'Module3');
         expect(mod).to.have.deep.property('staticDep.count', 1);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should not re-instantiate static modules', function(done) {
@@ -75,7 +75,7 @@ describe('Scatter stateful container',function(){
         expect(mod).to.have.deep.property('staticDep.data', 'Module3');
         expect(mod).to.have.deep.property('staticDep.count', 1);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -91,7 +91,7 @@ describe('Scatter stateful container',function(){
           expect(results).to.contain('Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('invoke static and dynamic services', function(done) {
@@ -104,7 +104,7 @@ describe('Scatter stateful container',function(){
           expect(results).to.contain('Module1');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -120,10 +120,10 @@ describe('Scatter stateful container',function(){
       var dyn = scatter.newStatefulContainer({});
       dyn.load('Module1').then(function(mod) {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/deadlock/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -138,7 +138,7 @@ describe('Scatter stateful container',function(){
       dyn.load('Module1').then(function(mod) {
         expect(mod).to.have.deep.property('data.data', "OK!");
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 });

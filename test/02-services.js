@@ -17,7 +17,7 @@ describe('Scatter Services',function(){
         expect(svc).to.have.property('any');
         expect(svc).to.have.property('pipeline');
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should invoke all sublevels', function(done) {
@@ -29,7 +29,7 @@ describe('Scatter Services',function(){
           expect(results).to.contain('Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should invoke only specified scope', function(done) {
@@ -40,7 +40,7 @@ describe('Scatter Services',function(){
           expect(results).to.contain('l1/Module2');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should not fail for empty scope', function(done) {
@@ -49,7 +49,7 @@ describe('Scatter Services',function(){
           expect(results).to.have.length('0');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -69,7 +69,7 @@ describe('Scatter Services',function(){
           expect(results[2]).to.be.equal('Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should invoke as chain', function(done) {
@@ -78,7 +78,7 @@ describe('Scatter Services',function(){
           expect(result).to.be.equal('Module1Module2Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should invoke for oneResult', function(done) {
@@ -87,7 +87,7 @@ describe('Scatter Services',function(){
           expect(result).to.be.equal('Module1');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('should invoke specific mode with dependency options', function(done) {
@@ -96,7 +96,7 @@ describe('Scatter Services',function(){
           expect(result).to.be.equal('Module1');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should invoke with promises', function(done) {
@@ -105,7 +105,7 @@ describe('Scatter Services',function(){
           expect(result).to.be.equal('Module1');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
 
     it('should propagate exceptions', function(done) {
@@ -113,10 +113,10 @@ describe('Scatter Services',function(){
         return svc.sequence().then(function(result) {
           done(new Error("Exception not thrown!"));
         });
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/Catch this!/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -136,7 +136,7 @@ describe('Scatter Services',function(){
           expect(results).to.contain('Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -153,7 +153,7 @@ describe('Scatter Services',function(){
           expect(result).to.be.equal('Module3');
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -178,7 +178,7 @@ describe('Scatter Services',function(){
           expect(loopDetected).to.be.true;
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it.skip('should impose order if more specific dependency is added', function(done) {
@@ -190,7 +190,7 @@ describe('Scatter Services',function(){
           expect(loopDetected).to.be.true;
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 });

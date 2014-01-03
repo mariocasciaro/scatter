@@ -16,10 +16,10 @@ describe('Scatter Complex wiring',function() {
         return svc.sequence().then(function(){
           done(new Error("No exception thrown"));
         })
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/deadlock/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
   
@@ -38,10 +38,10 @@ describe('Scatter Complex wiring',function() {
     it('Load module should cause deadlock', function(done) {
       scatter.load('Module1').then(function() {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/deadlock/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
     
     it('Svc invocation should cause deadlock', function(done) {
@@ -49,10 +49,10 @@ describe('Scatter Complex wiring',function() {
         return svc.sequence().then(function() {
           done(new Error("No exception thrown"));
         });
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/deadlock/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -73,7 +73,7 @@ describe('Scatter Complex wiring',function() {
           expect(results).to.contain(2);
           done();
         });
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -90,7 +90,7 @@ describe('Scatter Complex wiring',function() {
           expect(results).to.contain("2mod1");
           done();
         })
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -107,10 +107,10 @@ describe('Scatter Complex wiring',function() {
     it('should cause deadlock exception', function(done) {
       scatter.load('A').then(function(dep) {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         expect(err).to.match(/deadlock/);
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -122,7 +122,7 @@ describe('Scatter Complex wiring',function() {
     it('should not cause exception or locks', function(done) {
       scatter.load('A').then(function(dep) {
         done();
-      }).otherwise(done);
+      }).catch(done);
     });
   });
 
@@ -136,7 +136,7 @@ describe('Scatter Complex wiring',function() {
     it('should find deadlocks in initialization', function(done) {
       scatter.initializeAll().then(function() {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         //expect(results).to.have.length(2);
         expect(err).to.match(/deadlock/);
         done();
@@ -155,7 +155,7 @@ describe('Scatter Complex wiring',function() {
     it('should find deadlocks in instantiation', function(done) {
       scatter.initializeAll().then(function() {
         done(new Error("No exception thrown"));
-      }).otherwise(function(err) {
+      }).catch(function(err) {
         //expect(results).to.have.length(2);
         expect(err).to.match(/deadlock/);
         done();
