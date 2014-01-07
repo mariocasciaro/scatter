@@ -13,7 +13,7 @@ describe('Scatter Complex wiring',function() {
 
     it('should cause deadlock exception', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
-        return svc.sequence().then(function(){
+        return svc().then(function(){
           done(new Error("No exception thrown"));
         })
       }).catch(function(err) {
@@ -46,7 +46,7 @@ describe('Scatter Complex wiring',function() {
     
     it('Svc invocation should cause deadlock', function(done) {
       scatter.load('svc!svc').then(function(svc) {
-        return svc.sequence().then(function() {
+        return svc().then(function() {
           done(new Error("No exception thrown"));
         });
       }).catch(function(err) {
@@ -67,7 +67,7 @@ describe('Scatter Complex wiring',function() {
 
     it('should NOT cause deadlock', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
-        return svc.sequence().then(function(results) {
+        return svc().then(function(results) {
           expect(results).to.have.length(2);
           expect(results).to.contain(1);
           expect(results).to.contain(2);
@@ -84,7 +84,7 @@ describe('Scatter Complex wiring',function() {
 
     it('should NOT cause deadlock', function(done) {
       scatter.load('svc!trigger_bootstrap').then(function(svc) {
-        return svc.sequence().then(function(results) {
+        return svc().then(function(results) {
           expect(results).to.have.length(2);
           expect(results).to.contain("1mod2");
           expect(results).to.contain("2mod1");

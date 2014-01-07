@@ -86,7 +86,7 @@ describe('Scatter stateful container',function(){
 
     it('static provider invoke only static services', function(done) {
       scatter.load('svc!svc').then(function(svc) {
-        return svc.sequence().then(function(results) {
+        return svc().then(function(results) {
           expect(results).to.have.length(1);
           expect(results).to.contain('Module3');
           done();
@@ -97,7 +97,7 @@ describe('Scatter stateful container',function(){
     it('invoke static and dynamic services', function(done) {
       var dyn = scatter.newStatefulContainer({});
       dyn.load('svc!svc').then(function(svc) {
-        return svc.sequence().then(function(results) {
+        return svc().then(function(results) {
           expect(results).to.have.length(3);
           expect(results).to.contain('Module3');
           expect(results).to.contain('Module2');

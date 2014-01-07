@@ -1,20 +1,37 @@
+[![NPM version](https://badge.fury.io/js/scatter.png)](http://badge.fury.io/js/scatter)
+[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
+[![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
+[![Dependency Status](https://gemnasium.com/mariocasciaro/scatter.png)](https://gemnasium.com/mariocasciaro/scatter)
+
 Synopsis
 ======
 
-Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** to make your code whole again.
+Scatter is an **Inversion of Control (IoC) container** for Node.js. Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** and **Service locator** to link your modules together.
 
 Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. In addition by using Scatter [Services](#services) you can provide explicit extension points to your application.
 
 Every module created for Scatter **can be used even without the Scatter DI container**, they are just javascript objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads an annotation named `__module` to extract the information to initialize the module and inject dependencies.
 
-[![NPM](https://nodei.co/npm/scatter.png?downloads=true)](https://nodei.co/npm/scatter/)
-
-[![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter) [![Dependency Status](https://david-dm.org/mariocasciaro/scatter.png)](https://david-dm.org/mariocasciaro/scatter) [![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
-
 -----
 
 ## What's new
 
+#### 0.7
+
+* Support for relative paths in module dependencies.
+* **Breaking changes**:
+    * Services must now be defined using the full service namespace.
+      ```
+      provides: 'aService'
+      ```
+      Now becomes:
+      ```
+      provides: 'full/namespace/aService'
+      ```
+    * When requiring services without arguments (e.g. `svc!aService`) the `sequence` 
+      service invocator will be returned instead of the full service object. 
+      In practice now `svc!aService` === `svc|sequence!aService`.
+    
 #### 0.6
 
 * Several internal improvement, including plugin system refactoring, new benchmarking framework, performance optimizations.
@@ -101,8 +118,8 @@ module.exports.__module = {
 
 ## Documentation
 
-#### [Guide](https://github.com/mariocasciaro/scatter/wiki/Guide)
-#### [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
+### [Guide](https://github.com/mariocasciaro/scatter/wiki/Guide)
+### [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
 
 # Credits
 

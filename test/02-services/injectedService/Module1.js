@@ -4,7 +4,7 @@ module.exports = {
     return "Module1";
   },
   another_service: function() {
-    return module.exports.simple_service_svc.sequence();
+    return module.exports.simple_service_svc();
   }
 };
 module.exports.__module = {
