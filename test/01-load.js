@@ -361,24 +361,26 @@ describe('Scatter basic loading', function() {
       }).catch(done);
     });
     
-    it('should discover roots under symlinked dirs', function(done) {
-      var scatter = new Scatter();
-      var link = TEST_DIR + "/nodeModulesLink/base2";
-      try {
-        rimraf.sync(link);
-        //if it still exists, it means it
-      } catch(err) {
-        console.log(err);
-        //nothing here, this workaround is just for problem with invalid symlinks
-      }
-      fs.symlinkSync(TEST_DIR + "/nodeModules/base2", link);
-      
-      scatter.setNodeModulesDir(TEST_DIR + '/nodeModulesLink');
+    if(process.platform !== "win32") {
+      it('should discover roots under symlinked dirs', function(done) {
+        var scatter = new Scatter();
+        var link = TEST_DIR + "/nodeModulesLink/base2";
+        try {
+          rimraf.sync(link);
+          //if it still exists, it means it
+        } catch(err) {
+          console.log(err);
+          //nothing here, this workaround is just for problem with invalid symlinks
+        }
+        fs.symlinkSync(TEST_DIR + "/nodeModules/base2", link);
+        
+        scatter.setNodeModulesDir(TEST_DIR + '/nodeModulesLink');
 
-      scatter.load('Module1').then(function(mod) {
-        expect(mod).to.have.deep.property('dep.prop', 'mod2');
-        done();
-      }).catch(done);
-    });
+        scatter.load('Module1').then(function(mod) {
+          expect(mod).to.have.deep.property('dep.prop', 'mod2');
+          done();
+        }).catch(done);
+      });
+    }
   });
 });
