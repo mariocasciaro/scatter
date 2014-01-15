@@ -34,7 +34,7 @@ The directory structure below shows 3 particles (Scatter components):
   * `privateProfiles`
   * `admin`
 
-All the 3 components define some routes. The Scatter container allows you to write each components **as if it they were all included in a single app root, as if all the sources were actually contained in a single directory** (and not scattered across different components). 
+All the 3 components define some routes. The Scatter container allows you to write each component **as if it they were all included in a single app root, as if all the sources were actually contained in a single directory** (and not scattered across different components). 
 
 In this examples `routes` is for Scatter a `namespace` not a physical directory, it is a **federated container of modules**.
 
@@ -48,7 +48,7 @@ core
     `-- profiles.js
 |-- data
     `-- db.js
-/plugins
+plugins
 |-- privateProfiles
     |-- particle.json
     `-- routes            <--- Routes
@@ -186,7 +186,7 @@ module.exports.__module = {
 
 ## Stability
 
-**2 - Unstable**
+#### 2 - Unstable
 
 The API is in the process of settling, but has not yet had
 sufficient real-world testing to be considered stable.
