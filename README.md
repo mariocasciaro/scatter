@@ -14,6 +14,10 @@ Every module created for Scatter is totally agnostic to the IoC container and **
 
 -----
 
+### [Full Guide](https://github.com/mariocasciaro/scatter/wiki/Guide) | [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
+
+-----
+
 ## Features
 
 * Split your project into **components (particles)** and wire  modules using **Dependency Injection**.
