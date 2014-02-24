@@ -1,10 +1,9 @@
+![Scatter logo](https://raw2.github.com/mariocasciaro/resources/master/scatter_text_lg.png)
+
 [![NPM version](https://badge.fury.io/js/scatter.png)](http://badge.fury.io/js/scatter)
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
 [![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
 [![Dependency Status](https://gemnasium.com/mariocasciaro/scatter.png)](https://gemnasium.com/mariocasciaro/scatter)
-
-Synopsis
-======
 
 Scatter is an **Inversion of Control (IoC) container** for Node.js. Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** and **Service locator** to link your modules together.
 
@@ -195,10 +194,10 @@ module.exports.__module = {
 The API is in the process of settling, but has not yet had
 sufficient real-world testing to be considered stable.
 
-# Credits
+# Contributors
 
-* [Mario Casciaro](https://github.com/mariocasciaro) - Twitter [@mariocasciaro](https://twitter.com/mariocasciaro)
-* [Your name here]
+* [Mario Casciaro](https://github.com/mariocasciaro) - Twitter [@mariocasciaro](https://twitter.com/mariocasciaro) - Creator
+* Zbigniew Mrowinski - Twitter [@MrowinskiZ](https://twitter.com/MrowinskiZ) - Scatter logo
 
 -----
 
