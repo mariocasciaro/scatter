@@ -17,6 +17,20 @@ Every module created for Scatter is totally agnostic to the IoC container and **
 
 -----
 
+## Scatter virtual directory federation
+
+Although Scatter can be used as a "traditional" IoC container and has many usage patterns, the main reason for his existence is to allow the federation of multiple project directories into one. Dependency Injection, in fact, is not the reason Scatter was created but only a tool which allows to **transparently map multiple components**, called **particles** (which may also be distributed as npm pagackes), into **one virtual namespace**. It doesn't matter where a module is created, when used with Scatter it will always have a federated view over all the other modules in the project. 
+
+![Scatter federation](https://raw.githubusercontent.com/mariocasciaro/resources/master/scatter_federation.png)
+
+Where is the advantage of this you may ask...well imagine those components as plugins, you app would become immediately extensible with minimal effort and no boilerplate code to support the plugin infrastructure.
+
+The use cases? Here are some:
+* Create a CRM (or any other business app) and need to customize it for some clients whitout branching the code
+* Create a blog/forum/CMS and want people to extend it using plugins
+* Add all the use cases where an IoC container can improve decoupling and testing.
+
+
 ## Features
 
 * Split your project into **components (particles)** and wire  modules using **Dependency Injection**.
@@ -94,7 +108,7 @@ module.exports = function(homeRouter, profileRouter, privateRouter, adminRouter)
 };
 //The Scatter annotation
 module.exports.__module = {
-    //Inject this modules are arguments
+    //Inject this modules as arguments
     args: ["routes/home", "routes/profiles", "routes/private", "routes/admin"]
 };
 ```
@@ -198,7 +212,3 @@ sufficient real-world testing to be considered stable.
 
 * [Mario Casciaro](https://github.com/mariocasciaro) - Twitter [@mariocasciaro](https://twitter.com/mariocasciaro) - Creator
 * Zbigniew Mrowinski - Twitter [@MrowinskiZ](https://twitter.com/MrowinskiZ) - Scatter logo
-
------
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mariocasciaro/scatter/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
