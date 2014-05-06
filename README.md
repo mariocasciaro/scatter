@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
 [![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
 [![Dependency Status](https://gemnasium.com/mariocasciaro/scatter.png)](https://gemnasium.com/mariocasciaro/scatter)
+[![Gitter chat](https://badges.gitter.im/mariocasciaro/scatter.png)](https://gitter.im/mariocasciaro/scatter)
 
 Scatter is an **Inversion of Control (IoC) container** for Node.js. Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** and **Service locator** to link your modules together.
 
