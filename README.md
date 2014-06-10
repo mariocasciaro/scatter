@@ -4,17 +4,18 @@
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
 [![Coverage Status](https://coveralls.io/repos/mariocasciaro/scatter/badge.png)](https://coveralls.io/r/mariocasciaro/scatter)
 [![Dependency Status](https://gemnasium.com/mariocasciaro/scatter.png)](https://gemnasium.com/mariocasciaro/scatter)
+![Downloads](http://img.shields.io/npm/dm/scatter.svg)
 [![Gitter chat](https://badges.gitter.im/mariocasciaro/scatter.png)](https://gitter.im/mariocasciaro/scatter)
 
 Scatter is an **Inversion of Control (IoC) container** for Node.js. Scatter allows you to split your project in **particles** (components), and then uses **Dependency Injection** and **Service locator** to link your modules together.
 
-Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. In addition by using Scatter [Services](#services) you can provide explicit extension points to your application.
+Applications created with Scatter are **extensible out-of-the box**. Since every dependency is "virtual", you can override and extend every module. In addition by using Scatter [Services](https://github.com/mariocasciaro/scatter/wiki/Guide#services) you can provide explicit extension points to your application.
 
 Every module created for Scatter is totally agnostic to the IoC container and **can be used even without it**. Scatter modules are POJOs (Plain Old Javascript Objects), simply objects, factories and constructors that accept their dependencies as input. The only difference from a *plain* module is that Scatter reads an annotation named `__module` to extract the information to initialize the module and inject dependencies.
 
 -----
 
-### [Full Guide](https://github.com/mariocasciaro/scatter/wiki/Guide) | [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation)
+### [Full Guide](https://github.com/mariocasciaro/scatter/wiki/Guide) | [API docs](https://github.com/mariocasciaro/scatter/wiki/API-Documentation) | [Plugins](https://github.com/mariocasciaro/scatter/wiki/Plugins)
 
 -----
 
