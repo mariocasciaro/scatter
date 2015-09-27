@@ -1,4 +1,4 @@
-![Scatter logo](https://raw2.github.com/mariocasciaro/resources/master/scatter_text_lg.png)
+![Scatter logo](https://raw.githubusercontent.com/mariocasciaro/resources/master/scatter_text_lg.png)
 
 [![NPM version](https://badge.fury.io/js/scatter.png)](http://badge.fury.io/js/scatter)
 [![Build Status](https://travis-ci.org/mariocasciaro/scatter.png)](https://travis-ci.org/mariocasciaro/scatter)
