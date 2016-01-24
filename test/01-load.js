@@ -45,6 +45,15 @@ describe('Scatter basic loading', function() {
         done();
       }).catch(done);
     });
+
+    it('should accept ES6 modules transpiled by Babel6', function(done) {
+      scatter.load('ModuleES6').then(function(mod) {
+        expect(mod).to.exist;
+        expect(mod).to.have.property('prop', 'mod1');
+        done();
+      }).catch(done);
+    });
+
   });
 
 
@@ -125,7 +134,7 @@ describe('Scatter basic loading', function() {
         done();
       }).catch(done);
     });
-    
+
     it('should inject modules in constructor', function(done) {
       scatter.load('modules/RequireConstr').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depFactory');
@@ -160,6 +169,13 @@ describe('Scatter basic loading', function() {
         done(new Error("Exception not thrown"));
       }).catch(function(err) {
         expect(err).to.match(/Can't require a dynamic module from a static container/);
+        done();
+      }).catch(done);
+    });
+
+    it('should inject ES6 modules in ES6 module', function(done) {
+      scatter.load('modules/RequireFactoryES6').then(function(mod) {
+        expect(mod).to.have.deep.property('dep.prop', 'depObj');
         done();
       }).catch(done);
     });
