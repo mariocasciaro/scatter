@@ -148,8 +148,17 @@ describe('Scatter basic loading', function() {
         done();
       }).catch(done);
     });
-    
-    
+
+    // poor man's ES6 support detection
+    if ('function' === typeof Map) {
+      it('should inject modules in ES6 classes', function(done) {
+        scatter.load('modules/RequireClass').then(function(mod) {
+          expect(mod).to.have.deep.property('dep.prop', 'depFactory');
+          done();
+        }).catch(done);
+      });
+    }
+
     it('should inject modules in "initialize"', function(done) {
       scatter.load('modules/RequireOnInit').then(function(mod) {
         expect(mod).to.have.deep.property('dep.prop', 'depFactory');
