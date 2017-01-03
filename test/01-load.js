@@ -1,4 +1,3 @@
-
 var expect = require('chai').expect,
   fs = require('fs'),
   rimraf = require('rimraf'),
@@ -408,4 +407,31 @@ describe('Scatter basic loading', function() {
       });
     }
   });
+
+  describe("directory dependencies (#12)", function () {
+    var scatter;
+    before(function () {
+      scatter = new Scatter();
+      scatter.registerParticles(TEST_DIR + '/dirdep');
+    });
+
+    it('should load and return a module with directory dependency', function (done) {
+      scatter.load('Module1').then(function (mod) {
+        expect(mod).to.exist;
+        expect(mod).to.have.property('prop', 'module1');
+        expect(mod).to.have.property('depProp', 'dep');
+        done();
+      }).otherwise(done);
+    });
+
+    it('should prefer files over directories', function (done) {
+      scatter.load('dep2').then(function (mod) {
+        expect(mod).to.exist;
+        expect(mod).to.have.property('prop', 'dep2');
+        done();
+      }).otherwise(done);
+    });
+
+  });
+
 });
